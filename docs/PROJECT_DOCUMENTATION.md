@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-The Library Management App is a web-based system for a college library. It automates cataloguing, circulation (issue, renewal, return, reservation), late fines, payments, members and library settings. Its interface is the SmartLib design: a dark navy / teal / gold dashboard with a fixed sidebar. That UI is backed by a new Node.js + Express REST API on a MySQL 8 database. The UI is in English by default, with Hungarian selectable at runtime, and all money is in forint (Ft).
+The Library Management App is a web-based system for a college library. It automates cataloguing, circulation (issue, renewal, return, reservation), late fines, payments, members and library settings. Its interface is the SmartLib design: a dark navy / teal / gold dashboard with a fixed sidebar. That UI is backed by a new Node.js + Express REST API on a MySQL 8 database. The UI is in English by default, with Hungarian selectable at runtime, and all money is in Indian rupees (₹).
 
 Every book has a price and an exact shelf location: floor → section → shelf → rack → row → position. A librarian can issue a copy after automatic eligibility checks. At the return desk the late fee is previewed before the return is confirmed. Fines can be paid in full, in part, discounted or waived, and every change is reflected immediately on the dashboard and in reports.
 
@@ -28,7 +28,7 @@ Every book has a price and an exact shelf location: floor → section → shelf 
 ### 2.2 Objectives
 1. A central catalogue with price and exact shelf location for every book.
 2. Automated issue, renewal, return and reservation with eligibility checks (membership status and expiry, book limit, outstanding dues, availability).
-3. Automatic fines: **500 Ft per day late** (configurable), damage at a percentage of the price, lost books at price + processing fee.
+3. Automatic fines: **₹10 per day late** (configurable), damage at a percentage of the price, lost books at price + processing fee.
 4. Payments by Cash, UPI, Card or Bank Transfer, including partial payments, discounts, waivers, receipts and pending transfers.
 5. Role-based access for Admin, Librarian, Staff and Student.
 6. A live dashboard and nine exportable reports (print, CSV, PDF).
@@ -181,7 +181,7 @@ All routes are under `/api` and return JSON: `{ success, data, pagination? }` on
 ```
 library-app/
 ├── package.json, .env.example, README.md, PROGRESS.md
-├── database/mysql/   schema.sql (13 tables) · seed.js (demo snapshot → MySQL, Ft)
+├── database/mysql/   schema.sql (13 tables) · seed.js (demo snapshot → MySQL, ₹)
 ├── backend/
 │   ├── server.js            Express app, static frontend, hourly job, AUTO_SEED
 │   ├── config/db.js         mysql2 pool (10) · tx() transaction helper · schema check
@@ -202,14 +202,14 @@ library-app/
 
 **Transactions.** Every write that touches several tables runs in `tx()`: one pooled connection, `BEGIN … COMMIT`, with `SELECT … FOR UPDATE` on the book, member, loan or fine rows involved. Any error rolls the whole operation back.
 
-**Issue.** The member must be Active and not expired, hold fewer books than `maxBooksPerMember` (default 5), and owe no more than `maxPendingFine` (default 500 Ft). They must not already hold this title, and a copy must be free or held for them. The due date comes from the loan length (default 14 days) or an explicit date. A back-dated issue date is allowed so paper loans can be recorded; such a loan becomes Overdue immediately if its due date has passed. The copy counters are then recomputed from the loans and reservations, and the member is notified.
+**Issue.** The member must be Active and not expired, hold fewer books than `maxBooksPerMember` (default 5), and owe no more than `maxPendingFine` (default ₹500). They must not already hold this title, and a copy must be free or held for them. The due date comes from the loan length (default 14 days) or an explicit date. A back-dated issue date is allowed so paper loans can be recorded; such a loan becomes Overdue immediately if its due date has passed. The copy counters are then recomputed from the loans and reservations, and the member is notified.
 
 **Return.** `GET /returns/lookup` previews the fee before anything changes. `POST /returns` applies:
 
 ```
-Late fine     = finePerDay × daysOverdue                (500 Ft × days)
+Late fine     = finePerDay × daysOverdue                (₹10 × days)
 Damage charge = price × damageChargePercent / 100       (30 %)
-Lost charge   = price + lostProcessingFee               (+ 500 Ft)
+Lost charge   = price + lostProcessingFee               (+ ₹50)
 ```
 
 Each non-zero charge becomes its own fine. Lost and damaged copies are counted on the book. The reservation queue then runs: the first waiting member receives a hold for `reservationHoldDays` (3) and a "Reserved book is ready" notification.
@@ -218,14 +218,14 @@ Each non-zero charge becomes its own fine. Lost and damaged copies are counted o
 
 **Fines and payments.** A payment cannot exceed the remaining balance. Status is recalculated after every payment, discount or waiver (Pending → Partially Paid → Paid / Waived). Receipts are numbered `RCPT-000001` onwards. Bank transfers can be recorded as Pending and confirmed later.
 
-**AI assistant.** Regular expressions and keywords detect the intent: location, overdue, my loans, fines, statistics, popular, new, recommendations, or a filtered search by price (Ft), category, author, floor, shelf, rack, language or availability. Each intent runs a parameterised query. For example, "Where is The Alchemist?" answers "Floor 1, Fiction Section, Shelf A, Rack 03, Row B, Position 07".
+**AI assistant.** Regular expressions and keywords detect the intent: location, overdue, my loans, fines, statistics, popular, new, recommendations, or a filtered search by price (₹), category, author, floor, shelf, rack, language or availability. Each intent runs a parameterised query. For example, "Where is The Alchemist?" answers "Floor 1, Fiction Section, Shelf A, Rack 03, Row B, Position 07".
 
 ### 4.3 Frontend
 
 The SmartLib frontend is used as-is for layout and styling. `app.js` provides the page shell (sidebar, top bar, global search, notifications, theme), the auth guard and the UI kit (toasts, modals, confirm dialogs, skeletons, pagination). `api.js` attaches the token and sends the user to the login page on 401. Each page has its own module.
 
 Changes made for this project:
-- **Currency:** Ft throughout (`inr()` formats `1,234 Ft`; labels and form prefixes say Ft).
+- **Currency:** ₹ throughout (`inr()` formats `₹1,23,456` with Indian digit grouping; labels and form prefixes say ₹; PDF exports print `Rs.` because jsPDF's built-in fonts lack the ₹ glyph).
 - **Login:** accepts an email or user ID; the forms post with `method="post"`, so credentials can never end up in a URL.
 - **Issue form:** Issue date and Loan length fields; changing either updates the due date.
 - **Members:** a Neptun code field, also searchable and shown on the profile and in the members list.
@@ -262,12 +262,12 @@ The full table with inputs is in `docs/MANUAL_TEST_SCRIPT.md`. Every case passed
 |---|---|---|---|---|
 | T01–T03b | Auth | Login by email / ID, wrong password, empty body | 200 / 200 / 401 / 400 | Pass |
 | T04–T06b | Security | No token, student deletes book, student data scoping | 401 / 403 / own rows only / 403 | Pass |
-| T07–T09 | Circulation | Back-dated issue → preview → return 4 days late | Overdue; 2,000 Ft previewed and charged | Pass |
+| T07–T09 | Circulation | Back-dated issue → preview → return 4 days late | Overdue; ₹40 previewed and charged | Pass |
 | T10, T16 | Circulation | Dues limit, book limit | Refused with reason | Pass |
-| T11–T12 | Payments | Partial payment, overpayment | Partially Paid 1,500 Ft left; 400 | Pass |
+| T11–T12 | Payments | Partial payment, overpayment | Partially Paid ₹20 left; 400 | Pass |
 | T13 | Renewals | Renew overdue loan | Refused | Pass |
 | T14 | Reservations | Return a reserved book | Next member gets a 3-day hold and a notification | Pass |
-| T15 | Returns | Lost book | 2,990 + 500 = 3,490 Ft | Pass |
+| T15 | Returns | Lost book | ₹749 + ₹50 = ₹799 | Pass |
 | T17–T18 | Settings | Negative value; student edit | 400; 403 | Pass |
 | T19–T22 | Catalogue | Duplicate / invalid ISBN, add with exact location, delete | 409 / 400 / created / deleted | Pass |
 | T23 | Security | `' OR 1=1 --` in search | 0 rows, no error | Pass |

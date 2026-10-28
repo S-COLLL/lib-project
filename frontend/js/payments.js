@@ -39,7 +39,7 @@ function renderStats(totals) {
     ['Waived', get('Waived').amount, 'gift', 'tone-navy', `${get('Waived').count} fines written off`],
   ];
   $('stats').innerHTML = cards
-    .map(([l, v, ic, tone, foot], i) => `<div class="card stat-card reveal ${tone}" style="--i:${i}"><div class="stat-top"><span class="stat-label">${l}</span><span class="stat-icon">${icon(ic)}</span></div><div class="stat-value" data-v="${v}">0 Ft</div><div class="stat-foot">${foot}</div></div>`)
+    .map(([l, v, ic, tone, foot], i) => `<div class="card stat-card reveal ${tone}" style="--i:${i}"><div class="stat-top"><span class="stat-label">${l}</span><span class="stat-icon">${icon(ic)}</span></div><div class="stat-value" data-v="${v}">₹0</div><div class="stat-foot">${foot}</div></div>`)
     .join('');
   $('stats').querySelectorAll('[data-v]').forEach((el) => animateCounter(el, Number(el.dataset.v), { format: (x) => inr(x) }));
 }

@@ -26,8 +26,9 @@ const CATEGORY_ALIASES = {
 const STOP = new Set('show me list find get give all any the a an of books book with for please some that are is available which what do you have search looking look i want need on in at by'.split(' '));
 
 function parsePrice(text) {
-  const n = '(?:₹|rs\\.?|inr|huf)?\\s*(\\d+(?:[,\\s]\\d{3})*(?:\\.\\d+)?)\\s*(?:ft|huf|forint)?';
-  const c = (x) => Number(x.replace(/[,\s]/g, ''));
+  // ₹500, Rs. 500, INR 500 or 500 rupees; digits may use Indian grouping (1,00,000)
+  const n = '(?:₹|rs\\.?|inr)?\\s*(\\d+(?:,\\d{2,3})*(?:\\.\\d+)?)\\s*(?:rupees?|rs\\.?|inr)?';
+  const c = (x) => Number(x.replace(/,/g, ''));
   let m = text.match(new RegExp(`between\\s+${n}\\s+(?:and|to|-)\\s+${n}`, 'i'));
   if (m) return { minPrice: c(m[1]), maxPrice: c(m[2]) };
   m = text.match(new RegExp(`(?:under|below|less than|cheaper than|within|upto|up to|<)\\s*${n}`, 'i'));
@@ -126,7 +127,7 @@ exports.query = asyncHandler(async (req, res) => {
     return reply({
       intent: 'help',
       reply: "Hi! I'm your SmartLib assistant. I can locate books on the shelf, search by price, author, category, floor or language, list overdue books, show popular titles and summarise library statistics.",
-      suggestions: ['Where is The Alchemist?', 'Show science books under 2000 Ft', 'Find available books by Chetan Bhagat', 'Which books are overdue?', 'Show books available on Floor 2', 'Most popular books'],
+      suggestions: ['Where is The Alchemist?', 'Show science books under ₹500', 'Find available books by Chetan Bhagat', 'Which books are overdue?', 'Show books available on Floor 2', 'Most popular books'],
     });
   }
 
@@ -205,7 +206,7 @@ exports.query = asyncHandler(async (req, res) => {
     return reply({
       intent: 'unknown',
       reply: "I'm not sure what you're looking for. Try asking where a book is, or search by author, category, price or floor.",
-      suggestions: ['Where is Wings of Fire?', 'Programming books under 3000 Ft', 'Books by R.K. Narayan', 'Books on Floor 3'],
+      suggestions: ['Where is Wings of Fire?', 'Programming books under ₹800', 'Books by R.K. Narayan', 'Books on Floor 3'],
     });
   }
   const { rows, pagination } = await searchBooks({ ...q, limit: 12 }, { orderBy: 'b.available_copies DESC, b.times_borrowed DESC' });

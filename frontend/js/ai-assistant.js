@@ -8,13 +8,13 @@ $('sendBtn').innerHTML = `${icon('send')}<span class="hide-sm">Ask</span>`;
 
 const SUGGESTIONS = [
   'Where is The Alchemist?',
-  'Show science books under 2000 Ft',
+  'Show science books under ₹500',
   'Find available books by Chetan Bhagat',
   'Which books are overdue?',
   'Show books available on Floor 2',
   'Most popular books',
   'Hindi books',
-  'Programming books between 1000 Ft and 4000 Ft',
+  'Programming books between ₹300 and ₹900',
   'New arrivals',
   'How many books are available?',
 ];

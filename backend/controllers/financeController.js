@@ -91,7 +91,7 @@ exports.fineSummary = asyncHandler(async (req, res) => {
       remaining: L.round2(t.original - t.discount - t.paid - t.waived),
       byType: byType.map((x) => ({ _id: x._id, amount: L.round2(x.amount), count: Number(x.count) })),
       finePerDay: s.finePerDay,
-      currency: 'Ft',
+      currency: '₹',
     },
   });
 });

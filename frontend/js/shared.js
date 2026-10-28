@@ -380,8 +380,8 @@ export function openPaymentModal({ fine = null, member = null, onDone } = {}) {
       <div class="stack" style="gap:14px">
         ${fine ? '' : '<div class="field"><label>Member <span class="req">*</span></label><div id="payMember"></div></div>'}
         ${fine ? '' : `<div class="field"><label for="reason">Reason <span class="req">*</span></label><select class="select" id="reason" name="reason" required><option value="Membership Fee">Membership Fee</option><option value="Replacement Cost">Replacement Cost</option><option value="Other Charges">Other Charges</option></select></div>`}
-        <div class="field"><label for="amount">Amount (Ft) <span class="req">*</span></label>
-          <div class="input-group"><span class="input-prefix">Ft</span><input class="input with-prefix" type="number" id="amount" name="amount" min="1" ${fine ? `max="${remaining}"` : ''} step="1" required value="${fine ? remaining : 2000}"></div>
+        <div class="field"><label for="amount">Amount (₹) <span class="req">*</span></label>
+          <div class="input-group"><span class="input-prefix">₹</span><input class="input with-prefix" type="number" id="amount" name="amount" min="1" ${fine ? `max="${remaining}"` : ''} step="1" required value="${fine ? remaining : 500}"></div>
           ${fine ? `<div class="field-hint">Remaining balance ${inr(remaining)} — enter less for a partial payment.</div>` : ''}</div>
         <div class="field"><label>Payment method</label><div class="method-grid">${METHODS.map(([k, ic, s], i) => `<label class="method ${i === 0 ? 'active' : ''}"><input type="radio" name="method" value="${k}" ${i === 0 ? 'checked' : ''}>${icon(ic)}<strong>${k}</strong><small>${s}</small></label>`).join('')}</div></div>
         <div class="field"><label for="notes">Notes</label><input class="input" id="notes" name="notes" placeholder="Optional"></div>
@@ -541,10 +541,10 @@ export async function openBookForm({ book = null, onSaved } = {}) {
         <div class="field"><label for="f-pages">Number of pages</label><input class="input" type="number" id="f-pages" name="pages" min="0" value="${b.pages ?? ''}"></div>
         <div class="field full"><label for="f-desc">Description</label><textarea class="textarea" id="f-desc" name="description" maxlength="5000" rows="3">${h(b.description || '')}</textarea></div>
 
-        <div class="form-section">Pricing (Ft)</div>
-        <div class="field"><label for="f-price">Price <span class="req">*</span></label><div class="input-group"><span class="input-prefix">Ft</span><input class="input with-prefix" type="number" id="f-price" name="price" min="0" step="0.01" required value="${b.price ?? ''}"></div></div>
-        <div class="field"><label for="f-pp">Purchase price</label><div class="input-group"><span class="input-prefix">Ft</span><input class="input with-prefix" type="number" id="f-pp" name="purchasePrice" min="0" step="0.01" value="${b.purchasePrice ?? ''}"></div></div>
-        <div class="field"><label for="f-cv">Current value</label><div class="input-group"><span class="input-prefix">Ft</span><input class="input with-prefix" type="number" id="f-cv" name="currentValue" min="0" step="0.01" value="${b.currentValue ?? ''}"></div><span class="field-hint">Defaults to price</span></div>
+        <div class="form-section">Pricing (₹)</div>
+        <div class="field"><label for="f-price">Price <span class="req">*</span></label><div class="input-group"><span class="input-prefix">₹</span><input class="input with-prefix" type="number" id="f-price" name="price" min="0" step="0.01" required value="${b.price ?? ''}"></div></div>
+        <div class="field"><label for="f-pp">Purchase price</label><div class="input-group"><span class="input-prefix">₹</span><input class="input with-prefix" type="number" id="f-pp" name="purchasePrice" min="0" step="0.01" value="${b.purchasePrice ?? ''}"></div></div>
+        <div class="field"><label for="f-cv">Current value</label><div class="input-group"><span class="input-prefix">₹</span><input class="input with-prefix" type="number" id="f-cv" name="currentValue" min="0" step="0.01" value="${b.currentValue ?? ''}"></div><span class="field-hint">Defaults to price</span></div>
 
         <div class="form-section">Inventory</div>
         <div class="field"><label for="f-qty">Quantity (total copies) <span class="req">*</span></label><input class="input" type="number" id="f-qty" name="quantity" min="1" max="10000" required value="${b.quantity ?? 1}"></div>

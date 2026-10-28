@@ -13,14 +13,14 @@ Run on freshly seeded data (`npm run seed:mysql`, `npm start`). UI steps use the
 | T06 | Student sees own fines only | `GET /fines` as student | Only MEM0001 rows | Pass |
 | T06b | Student opens another member | `GET /members/MEM0002` as student | 403 | Pass |
 | T07 | Back-dated issue | Issue Books → member MEM0016, book BK0040, Issue date = today − 18, Loan length 14 days | Loan created as **Overdue** | Pass |
-| T08 | Late-fee preview | Return Books → search the transaction | Shows 4 days late, **2,000 Ft** (4 × 500) | Pass |
-| T09 | Return 4 days late | Confirm return (Good) | Late Fine 2,000 Ft created; copy back on shelf | Pass |
-| T10 | Dues limit | Issue another book to MEM0016 | Refused: pending fines above 500 Ft | Pass |
-| T11 | Partial payment | Pay 500 Ft of the 2,000 Ft fine | Fine **Partially Paid**, 1,500 Ft remaining, receipt number | Pass |
-| T12 | Overpayment | Pay 9,999 Ft on the same fine | 400 "exceeds the remaining balance" | Pass |
+| T08 | Late-fee preview | Return Books → search the transaction | Shows 4 days late, **₹40** (4 × ₹10) | Pass |
+| T09 | Return 4 days late | Confirm return (Good) | Late Fine ₹40 created; copy back on shelf | Pass |
+| T10 | Dues limit | Add a ₹500 manual charge to MEM0016, then issue another book to MEM0016 | Refused: ₹540 pending fines above the ₹500 limit | Pass |
+| T11 | Partial payment | Pay ₹20 of the ₹40 late fine | Fine **Partially Paid**, ₹20 remaining, receipt number | Pass |
+| T12 | Overpayment | Pay ₹9,999 on the same fine | 400 "exceeds the remaining balance" | Pass |
 | T13 | Renew overdue loan | Renew TXN00010 | Refused | Pass |
 | T14 | Reservation hold | Return a copy of BK0035 (Zero to One) | First waiting reservation becomes **Available**, 3-day hold, "Reservation ready" notification | Pass |
-| T15 | Lost book | Issue BK0041 then return as Lost | Fine = price 2,990 + 500 = **3,490 Ft**; lost copies +1 | Pass |
+| T15 | Lost book | Issue BK0041 then return as Lost | Fine = price ₹749 + ₹50 = **₹799**; lost copies +1 | Pass |
 | T16 | Book limit | Set max books = current + 1, issue twice | Second issue refused "(limit n)" | Pass |
 | T17 | Settings validation | `PUT /settings {"finePerDay":-1}` | 400 | Pass |
 | T18 | Student changes settings | `PUT /settings` as student | 403 | Pass |

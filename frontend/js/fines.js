@@ -50,7 +50,7 @@ async function loadSummary() {
       ['Outstanding', s.remaining, 'alert', 'tone-red', `${s.pendingCount} unpaid charges`],
     ];
     $('stats').innerHTML = cards
-      .map(([l, v, ic, tone, foot], i) => `<div class="card stat-card reveal ${tone}" style="--i:${i}"><div class="stat-top"><span class="stat-label">${l}</span><span class="stat-icon">${icon(ic)}</span></div><div class="stat-value" data-v="${v}">0 Ft</div><div class="stat-foot">${foot}</div></div>`)
+      .map(([l, v, ic, tone, foot], i) => `<div class="card stat-card reveal ${tone}" style="--i:${i}"><div class="stat-top"><span class="stat-label">${l}</span><span class="stat-icon">${icon(ic)}</span></div><div class="stat-value" data-v="${v}">₹0</div><div class="stat-foot">${foot}</div></div>`)
       .join('');
     $('stats').querySelectorAll('[data-v]').forEach((el) => animateCounter(el, Number(el.dataset.v), { format: (x) => inr(x) }));
   } catch (e) {
@@ -116,7 +116,7 @@ function adjust(f, kind) {
     size: 'modal-sm',
     body: `<form id="adjF" novalidate class="stack" style="gap:14px">${
       isDisc
-        ? `<div class="field"><label>Discount amount (Ft) <span class="req">*</span></label><input class="input" type="number" name="discount" min="0" max="${f.originalAmount - f.paidAmount - f.waivedAmount}" required value="${f.discount || ''}"><span class="field-hint">Replaces any previous discount</span></div>`
+        ? `<div class="field"><label>Discount amount (₹) <span class="req">*</span></label><input class="input" type="number" name="discount" min="0" max="${f.originalAmount - f.paidAmount - f.waivedAmount}" required value="${f.discount || ''}"><span class="field-hint">Replaces any previous discount</span></div>`
         : `<div class="callout warn">${icon('alert')}<span>The remaining ${inr(f.remainingAmount)} will be written off and recorded as a waived payment.</span></div>`
     }<div class="field"><label>Reason</label><input class="input" name="reason" placeholder="e.g. Medical emergency"></div></form>`,
     footer: `<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="adjGo">${isDisc ? 'Apply discount' : 'Waive fine'}</button>`,
@@ -146,7 +146,7 @@ function chargeForm() {
     body: `<form id="chF" novalidate class="stack" style="gap:14px">
       <div class="field"><label>Member <span class="req">*</span></label><div id="chMember"></div></div>
       <div class="field"><label>Type <span class="req">*</span></label><select class="select" name="type" required><option>Replacement</option><option>Damage</option><option>Membership Fee</option><option>Other</option></select></div>
-      <div class="field"><label>Amount (Ft) <span class="req">*</span></label><input class="input" type="number" name="amount" min="1" required></div>
+      <div class="field"><label>Amount (₹) <span class="req">*</span></label><input class="input" type="number" name="amount" min="1" required></div>
       <div class="field"><label>Description</label><input class="input" name="description" placeholder="What is this charge for?"></div></form>`,
     footer: `<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="chGo">${icon('plus')}Add charge</button>`,
   });

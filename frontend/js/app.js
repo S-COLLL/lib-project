@@ -13,10 +13,10 @@ export const hasRole = (...roles) => !!session.user && roles.includes(session.us
 
 export const h = (v) =>
   String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-// Money is shown in Hungarian forint. The helper keeps SmartLib's name so every page uses it unchanged.
-export const CURRENCY = 'Ft';
+// Money is shown in Indian rupees with Indian digit grouping (₹1,00,000).
+export const CURRENCY = '₹';
 export const inr = (n, digits = 0) =>
-  `${Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: 2 })} ${CURRENCY}`;
+  `${CURRENCY}${Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: digits, maximumFractionDigits: 2 })}`;
 export const num = (n) => Number(n || 0).toLocaleString('en-US');
 export const fmtDate = (d) => (d ? new Date(d).toLocaleDateString(LOCALE, { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 export const fmtDateTime = (d) =>

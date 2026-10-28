@@ -10,7 +10,8 @@
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js",
     "seed:mysql": "node database/mysql/seed.js",
-    "setup": "node database/mysql/setup.js"
+    "setup": "node database/mysql/setup.js",
+    "convert:inr": "node database/mysql/convert-ft-to-inr.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

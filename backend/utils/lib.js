@@ -10,7 +10,7 @@ const STAFF = ['admin', 'librarian', 'staff'];
 /* ------------------------------- Formatting ------------------------------- */
 
 const round2 = (n) => Math.round((Number(n) || 0) * 100) / 100;
-const money = (n) => `${Number(n || 0).toLocaleString('en-US')} Ft`;
+const money = (n) => `₹${Number(n || 0).toLocaleString('en-IN')}`;
 const id = (v) => (v === null || v === undefined ? null : String(v));
 const code = (prefix, n, width) => `${prefix}${String(n).padStart(width, '0')}`;
 const startOfDay = (d) => {
@@ -60,16 +60,16 @@ async function assignNextCode(db, table, pk, column, prefix, width, rowId) {
 
 const SETTING_DEFAULTS = {
   libraryName: 'SmartLib Central Library',
-  finePerDay: 500,
+  finePerDay: 10,
   loanDays: 14,
   maxRenewals: 2,
   maxBooksPerMember: 5,
   maxPendingFine: 500,
   reservationHoldDays: 3,
   reservationValidityDays: 30,
-  lostProcessingFee: 500,
+  lostProcessingFee: 50,
   damageChargePercent: 30,
-  membershipFee: 2000,
+  membershipFee: 500,
   dueSoonDays: 2,
   backupPath: './backups',
 };
@@ -81,7 +81,7 @@ async function getSettings(db = pool) {
   rows.forEach((r) => {
     if (r.setting_key in SETTING_DEFAULTS) s[r.setting_key] = TEXT_SETTINGS.includes(r.setting_key) ? r.setting_value : Number(r.setting_value);
   });
-  s.currency = 'Ft';
+  s.currency = '₹';
   return s;
 }
 

@@ -122,7 +122,7 @@ function range(q, col) {
 const REPORTS = {
   books: {
     title: 'Books Report',
-    columns: ['Book ID', 'Title', 'Author', 'Category', 'ISBN', 'Total', 'Available', 'Issued', 'Price (Ft)', 'Location', 'Status'],
+    columns: ['Book ID', 'Title', 'Author', 'Category', 'ISBN', 'Total', 'Available', 'Issued', 'Price (₹)', 'Location', 'Status'],
     async rows() {
       const [r] = await pool.query(`${L.BOOK_SQL} ORDER BY b.book_code`);
       return r.map((b) => [b.book_code, b.title, b.author_name, b.category_name, b.isbn, b.quantity, b.available_copies, b.issued_copies, b.price, b.shelf_code ? `F${b.shelf_floor}-${b.shelf_code}-R${b.rack}-${b.shelf_row}${b.position}` : '', b.status]);
@@ -139,7 +139,7 @@ const REPORTS = {
   },
   returned: {
     title: 'Returned Books Report',
-    columns: ['Return ID', 'Transaction', 'Member', 'Book', 'Issue Date', 'Due Date', 'Return Date', 'Days Late', 'Condition', 'Fine (Ft)'],
+    columns: ['Return ID', 'Transaction', 'Member', 'Book', 'Issue Date', 'Due Date', 'Return Date', 'Days Late', 'Condition', 'Fine (₹)'],
     async rows(q) {
       const rg = range(q, 'l.return_date');
       const [r] = await pool.query(`${L.LOAN_SQL} WHERE l.return_date IS NOT NULL${rg.sql} ORDER BY l.return_date DESC`, rg.params);
@@ -148,7 +148,7 @@ const REPORTS = {
   },
   overdue: {
     title: 'Overdue Report',
-    columns: ['Transaction', 'Member ID', 'Member', 'Book', 'Due Date', 'Days Overdue', 'Fine So Far (Ft)'],
+    columns: ['Transaction', 'Member ID', 'Member', 'Book', 'Due Date', 'Days Overdue', 'Fine So Far (₹)'],
     async rows() {
       const s = await L.getSettings();
       const [r] = await pool.query(`${L.LOAN_SQL} WHERE l.status = 'Overdue' ORDER BY l.due_date`);
@@ -160,7 +160,7 @@ const REPORTS = {
   },
   fines: {
     title: 'Fine Report',
-    columns: ['Fine ID', 'Member', 'Type', 'Transaction', 'Original (Ft)', 'Discount (Ft)', 'Paid (Ft)', 'Waived (Ft)', 'Remaining (Ft)', 'Status', 'Date'],
+    columns: ['Fine ID', 'Member', 'Type', 'Transaction', 'Original (₹)', 'Discount (₹)', 'Paid (₹)', 'Waived (₹)', 'Remaining (₹)', 'Status', 'Date'],
     async rows(q) {
       const rg = range(q, 'f.created_at');
       const [r] = await pool.query(
@@ -173,7 +173,7 @@ const REPORTS = {
   },
   payments: {
     title: 'Payment Report',
-    columns: ['Payment ID', 'Receipt', 'Member', 'Reason', 'Amount (Ft)', 'Method', 'Status', 'Date', 'Collected By'],
+    columns: ['Payment ID', 'Receipt', 'Member', 'Reason', 'Amount (₹)', 'Method', 'Status', 'Date', 'Collected By'],
     async rows(q) {
       const rg = range(q, 'p.payment_date');
       const [r] = await pool.query(
@@ -186,7 +186,7 @@ const REPORTS = {
   },
   members: {
     title: 'Member Report',
-    columns: ['Member ID', 'Name', 'Email', 'Neptun', 'Phone', 'Department', 'Type', 'Expiry', 'Issued', 'Returned', 'Pending Fine (Ft)', 'Paid (Ft)', 'Status'],
+    columns: ['Member ID', 'Name', 'Email', 'Neptun', 'Phone', 'Department', 'Type', 'Expiry', 'Issued', 'Returned', 'Pending Fine (₹)', 'Paid (₹)', 'Status'],
     async rows() {
       const [r] = await pool.query(`${L.MEMBER_SQL} ORDER BY m.member_code`);
       return r.map(L.memberOut).map((m) => [m.memberId, m.name, m.email, m.neptunCode, m.phone, m.department, m.membershipType, ymd(m.membershipExpiry), m.booksIssued, m.booksReturned, m.pendingFine, m.totalFinePaid, m.status]);

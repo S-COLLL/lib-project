@@ -109,7 +109,7 @@ function select(tid) {
           <label class="cond active"><input type="radio" name="condition" value="Good" checked>Good</label>
           <label class="cond dmg"><input type="radio" name="condition" value="Damaged">Damaged</label>
           <label class="cond lost"><input type="radio" name="condition" value="Lost">Lost</label></div></div>
-        <div class="field hidden" id="dmgField"><label for="dmg">Damage charge (Ft)</label><input class="input" type="number" id="dmg" name="damageCharge" min="0" value="${damageDefault}"><span class="field-hint">Default ${settings.damageChargePercent}% of book price</span></div>
+        <div class="field hidden" id="dmgField"><label for="dmg">Damage charge (₹)</label><input class="input" type="number" id="dmg" name="damageCharge" min="0" value="${damageDefault}"><span class="field-hint">Default ${settings.damageChargePercent}% of book price</span></div>
         <div class="field"><label for="remarks">Remarks</label><input class="input" id="remarks" name="remarks" placeholder="Optional"></div>
         <div class="money-summary" id="summary"></div>
         <button class="btn btn-primary btn-lg btn-block" id="confirmReturn" type="submit">${icon('undo')}Confirm return</button>

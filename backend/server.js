@@ -8,6 +8,13 @@ const rateLimit = require('express-rate-limit');
 const { pool, checkSchema } = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const { runMaintenance } = require('./utils/maintenance');
+const { convert: convertToRupees } = require('../database/mysql/convert-ft-to-inr');
+
+// Databases seeded before the switch to ₹ still hold Ft amounts; convert them once, before any upkeep.
+const ensureRupees = () =>
+  convertToRupees().then((summary) => {
+    if (summary) console.log(summary);
+  });
 
 if (!process.env.JWT_SECRET) {
   console.error('FATAL: JWT_SECRET is not set. Copy .env.example to .env and set it.');
@@ -57,7 +64,11 @@ app.get('/api/health', async (req, res) => {
 // request each hour (per instance) runs the maintenance job instead.
 if (process.env.VERCEL) {
   let lastMaintenance = 0;
+  let inRupees = false;
   app.use('/api', async (_req, _res, next) => {
+    if (!inRupees) {
+      inRupees = await ensureRupees().then(() => true, (e) => console.error('Currency conversion failed:', e.message));
+    }
     if (Date.now() - lastMaintenance > 60 * 60 * 1000) {
       lastMaintenance = Date.now();
       await runMaintenance().catch((e) => console.error('Maintenance failed:', e.message));
@@ -107,6 +118,7 @@ async function start() {
       await require('../database/mysql/seed').seed();
     }
   }
+  await ensureRupees().catch((e) => console.error('Currency conversion failed:', e.message));
   await runMaintenance().catch((e) => console.error('Maintenance failed:', e.message));
   setInterval(() => runMaintenance().catch((e) => console.error('Maintenance failed:', e.message)), 60 * 60 * 1000);
   app.listen(PORT, () => console.log(`Library app running on http://localhost:${PORT}`));

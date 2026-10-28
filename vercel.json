@@ -5,7 +5,7 @@
   "outputDirectory": "frontend",
   "regions": ["bom1"],
   "functions": {
-    "api/index.js": { "maxDuration": 30 }
+    "api/index.js": { "maxDuration": 30, "includeFiles": "frontend/js/demo/{demo-data.js,package.json}" }
   },
   "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }]
 }

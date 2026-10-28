@@ -266,15 +266,16 @@ CREATE TABLE settings (
 
 INSERT INTO settings (setting_key, setting_value) VALUES
   ('libraryName', 'SmartLib Central Library'),
-  ('finePerDay', '500'),
+  ('finePerDay', '10'),
   ('loanDays', '14'),
   ('maxRenewals', '2'),
   ('maxBooksPerMember', '5'),
   ('maxPendingFine', '500'),
   ('reservationHoldDays', '3'),
   ('reservationValidityDays', '30'),
-  ('lostProcessingFee', '500'),
+  ('lostProcessingFee', '50'),
   ('damageChargePercent', '30'),
-  ('membershipFee', '2000'),
+  ('membershipFee', '500'),
   ('dueSoonDays', '2'),
-  ('backupPath', './backups');
+  ('backupPath', './backups'),
+  ('currency', 'INR');

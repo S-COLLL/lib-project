@@ -207,7 +207,7 @@ function renewForm(m, onDone) {
     subtitle: `${h(m.name)} · currently valid until ${fmtDate(m.membershipExpiry)}`,
     size: 'modal-sm',
     body: `<form id="renewF" class="stack" style="gap:14px"><div class="field"><label>Extend by</label><select class="select" name="months"><option value="6">6 months</option><option value="12" selected>12 months</option><option value="24">24 months</option></select></div>
-      <div class="field"><label>Fee (Ft)</label><input class="input" type="number" name="amount" min="0" value="2000"></div>
+      <div class="field"><label>Fee (₹)</label><input class="input" type="number" name="amount" min="0" value="500"></div>
       <div class="field"><label>Payment method</label><select class="select" name="method"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank Transfer</option></select></div></form>`,
     footer: `<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="renewGo">${icon('refresh')}Renew & collect fee</button>`,
   });
@@ -246,7 +246,7 @@ function memberForm(m = null) {
       <div class="field"><label>Account status</label><select class="select" name="status">${['Active', 'Expired', 'Suspended'].map((t) => `<option ${m?.status === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
       <div class="field"><label>Membership start <span class="req">*</span></label><input class="input" type="date" name="membershipStart" required value="${isoDate(m?.membershipStart || new Date())}"></div>
       <div class="field"><label>Membership expiry <span class="req">*</span></label><input class="input" type="date" name="membershipExpiry" required value="${isoDate(m?.membershipExpiry || new Date(Date.now() + 365 * 86400000))}"></div>
-      ${m ? '' : '<div class="field full"><label class="switch"><input type="checkbox" name="collectFee" checked><span class="track"></span><span>Collect membership fee now (2,000 Ft, cash)</span></label></div>'}
+      ${m ? '' : '<div class="field full"><label class="switch"><input type="checkbox" name="collectFee" checked><span class="track"></span><span>Collect membership fee now (₹500, cash)</span></label></div>'}
     </form>`,
     footer: `<button class="btn" data-close>Cancel</button><button class="btn btn-primary" id="memberSave">${icon('check')}${m ? 'Save changes' : 'Add member'}</button>`,
   });

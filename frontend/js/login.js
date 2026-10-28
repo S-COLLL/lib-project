@@ -28,7 +28,7 @@ const feats = [
   ['mapPin', 'Exact shelf locations'],
   ['sparkles', 'AI library assistant'],
   ['qr', 'QR & barcode lookup'],
-  ['rupee', 'Fines & payments in Ft'],
+  ['rupee', 'Fines & payments in ₹'],
 ];
 document.getElementById('heroFeats').innerHTML = feats.map(([i, t], k) => `<div class="hero-feat" style="animation-delay:${300 + k * 90}ms">${icon(i)}${t}</div>`).join('');
 document.getElementById('shelfArt').innerHTML = [90, 120, 70, 140, 100, 60, 130, 110, 85, 150, 95, 75]

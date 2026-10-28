@@ -132,16 +132,16 @@ pw.addEventListener('submit', async (e) => {
 /* Policy */
 const POLICY = [
   ['libraryName', 'Library name', 'text'],
-  ['finePerDay', 'Late fine per day (Ft)', 'number'],
+  ['finePerDay', 'Late fine per day (₹)', 'number'],
   ['loanDays', 'Loan period (days)', 'number'],
   ['maxRenewals', 'Max renewals', 'number'],
   ['maxBooksPerMember', 'Max books per member', 'number'],
-  ['maxPendingFine', 'Block borrowing above dues (Ft)', 'number'],
+  ['maxPendingFine', 'Block borrowing above dues (₹)', 'number'],
   ['reservationHoldDays', 'Reservation hold (days)', 'number'],
   ['reservationValidityDays', 'Reservation validity (days)', 'number'],
-  ['lostProcessingFee', 'Lost book processing fee (Ft)', 'number'],
+  ['lostProcessingFee', 'Lost book processing fee (₹)', 'number'],
   ['damageChargePercent', 'Damage charge (% of price)', 'number'],
-  ['membershipFee', 'Annual membership fee (Ft)', 'number'],
+  ['membershipFee', 'Annual membership fee (₹)', 'number'],
   ['dueSoonDays', 'Due-soon reminder (days before)', 'number'],
   ['backupPath', 'Data backup folder (on the server)', 'text'],
 ];

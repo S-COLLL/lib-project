@@ -1,9 +1,9 @@
 # Library Management App
 SmartLib
 
-A full-stack library system: catalogue with exact shelf locations, issue / return / renew, reservations with hold queue, automatic late fines (500 Ft/day), payments, reports, a rule-based AI assistant and notifications.
+A full-stack library system: catalogue with exact shelf locations, issue / return / renew, reservations with hold queue, automatic late fines (₹10/day), payments, reports, a rule-based AI assistant and notifications.
 
-The interface is the SmartLib UI (dark navy / teal / gold, Inter). It is English by default, and Hungarian can be selected in **Settings → Appearance → Language / Nyelv**. Money is shown in **Ft**.
+The interface is the SmartLib UI (dark navy / teal / gold, Inter). It is English by default, and Hungarian can be selected in **Settings → Appearance → Language / Nyelv**. Money is shown in **Indian rupees (₹)**.
 
 - **Frontend:** HTML5, CSS3, vanilla JavaScript ES modules, Chart.js. No framework, no build step.
 - **Backend:** Node.js 18+, Express 4, MySQL 8 (InnoDB, utf8mb4) via `mysql2` with a pool of 10.

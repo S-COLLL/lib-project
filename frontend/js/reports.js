@@ -95,8 +95,8 @@ $('pdfBtn').addEventListener('click', (e) => {
       doc.text(report.title, 36, 48);
       doc.setFontSize(9);
       doc.text(`Generated ${new Date(report.generatedAt).toLocaleString('en-IN')} · ${report.rows.length} rows`, W - 36, 48, { align: 'right' });
-      // jsPDF's built-in fonts (WinAnsi) lack ő/ű — fall back to ö/ü so Hungarian titles stay readable
-      const clean = (v) => String(v ?? '').replace(/ő/g, 'ö').replace(/Ő/g, 'Ö').replace(/ű/g, 'ü').replace(/Ű/g, 'Ü');
+      // jsPDF's built-in fonts (WinAnsi) lack ₹ and ő/ű — use "Rs." and ö/ü so amounts and Hungarian titles stay readable
+      const clean = (v) => String(v ?? '').replace(/₹/g, 'Rs.').replace(/ő/g, 'ö').replace(/Ő/g, 'Ö').replace(/ű/g, 'ü').replace(/Ű/g, 'Ü');
       doc.autoTable({
         startY: 82,
         head: [report.columns.map(clean)],

@@ -5,13 +5,13 @@
 | Area | State |
 |---|---|
 | MySQL schema (13 tables, FKs, CHECKs, generated-column unique index) | Done — imported and exercised on MySQL 9.7 |
-| Seed (SmartLib demo snapshot converted to Ft + Hungarian titles) | Done |
+| Seed (SmartLib demo snapshot in ₹ + Hungarian titles) | Done |
 | REST API — 15 routers, 65 endpoints in the SmartLib response format | Done — all endpoints return 200 for admin |
 | Circulation rules (eligibility, back-dated issue, return preview, late/damage/lost fines, renewals, reservation hold queue) | Done — tested |
 | Fines and payments (partial, discount, waive, receipts, pending confirmation) | Done — tested |
 | Hourly maintenance job | Done |
 | Frontend: SmartLib UI (16 pages) wired to MySQL | Done — 17 views load with no JS/API errors |
-| Ft currency, Neptun code, issue date + loan length, backup folder + "Back up now" | Done |
+| ₹ currency, Neptun code, issue date + loan length, backup folder + "Back up now" | Done |
 | Hungarian / English switch | Done (Settings → Appearance) |
 | Responsive at 390 px | Done — 16 pages, no horizontal scroll |
 | Automated API regression (26 checks) | 26 / 26 pass |
@@ -28,7 +28,7 @@
 - **Backend:** written fresh for MySQL, reproducing the API contract of SmartLib's in-browser demo backend (`frontend/js/demo/demo-api.js`), so every page works unchanged.
 - **Tables:** the 9 core tables of the brief + `authors` (Authors page), `notifications` + `notification_reads` (bell / notifications page) and `settings`. `fine_payments` also stores membership-fee payments (`fine_id` NULL).
 - **Members ↔ users:** a member may exist without a login (`user_id` NULL, `ON DELETE SET NULL`), as in SmartLib.
-- **Money:** Ft everywhere. Seed prices = SmartLib ₹ × 4; late fines recomputed at 500 Ft/day; lost = price + 500 Ft; damage = 30 % of price; membership fee 2,000 Ft; dues limit 500 Ft.
+- **Money:** Indian rupees (₹) everywhere, switched from Ft on 2026-10-28. Seed amounts are SmartLib's own ₹ values: late fine ₹10/day; lost = price + ₹50; damage = 30 % of price; membership fee ₹500; dues limit ₹500. PDF exports print "Rs." because jsPDF's built-in fonts lack the ₹ glyph.
 - **Codes** (BK0001, MEM0001, TXN00001 …) equal the primary key, so seeded IDs match the SmartLib screenshots; return and receipt numbers use their own sequence.
 - **Deleting** a book or member that has history is refused / turned into a suspension, so loans, fines and payments stay auditable.
 - **Language:** English default (matches the screenshots); Hungarian is a runtime translation of UI strings only — titles, names and notes stay as entered.

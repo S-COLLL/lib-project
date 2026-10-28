@@ -1,6 +1,6 @@
 /**
- * Loads the demo library into MySQL: the SmartLib demo snapshot (frontend/js/demo/demo-data.js)
- * converted to Ft with this library's policy (500 Ft/day late fine), plus Hungarian titles.
+ * Loads the demo library into MySQL: the SmartLib demo snapshot (frontend/js/demo/demo-data.js),
+ * whose amounts are already in ₹ under the library policy (₹10/day late fine), plus Hungarian titles.
  * Run: npm run seed:mysql   (wipes and reloads every table)
  */
 require('dotenv').config({ path: require('path').join(__dirname, '..', '..', '.env') });
@@ -10,13 +10,7 @@ const bcrypt = require('bcryptjs');
 const mysql = require('mysql2/promise');
 const { connectionOptions } = require('../../backend/config/connection');
 
-const PRICE_FACTOR = 4; // ₹ → Ft for book prices and membership fees
-const FINE_PER_DAY = 500;
-const LOST_FEE = 500;
-const DAMAGE_PERCENT = 30;
-
 const num = (codeStr) => Number(String(codeStr).replace(/\D/g, ''));
-const ft = (inr) => Math.round((Number(inr) * PRICE_FACTOR) / 10) * 10;
 const d = (iso) => (iso ? new Date(iso) : null);
 const neptun = (seed) => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
@@ -51,7 +45,7 @@ const HUNGARIAN = [
     publicationDate: '2015-03-02',
     edition: '12th',
     pages: 432,
-    price: 3990,
+    price: 999,
     quantity: 3,
     timesBorrowed: 6,
     description: 'Heathcliff és Catherine szenvedélyes, sorsszerű szerelmének története a yorkshire-i lápvidéken.',
@@ -65,7 +59,7 @@ const HUNGARIAN = [
     publicationDate: '2011-09-15',
     edition: 'Classic',
     pages: 512,
-    price: 2990,
+    price: 749,
     quantity: 3,
     timesBorrowed: 9,
     description: 'Tímár Mihály, a komáromi hajóbiztos kettős életének regénye a Duna partjától a Senki szigetéig.',
@@ -147,11 +141,9 @@ async function seed() {
       ]);
     }
 
-    const bookPrice = {};
     for (const b of data.books) {
       const id = num(b.bookId);
       ids.books[b._id] = id;
-      bookPrice[id] = ft(b.price);
       const l = b.location || {};
       await q(
         `INSERT INTO books (book_id, book_code, title, isbn, author_id, category_id, publisher, publication_date, edition, language, subcategory, description,
@@ -159,7 +151,7 @@ async function seed() {
            status, times_borrowed, shelf_id, rack, shelf_row, position, added_by, created_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, b.bookId, b.title, b.isbn, ids.authors[b.author], ids.categories[b.category], b.publisher || '', d(b.publicationDate), b.edition || '1st', b.language,
-          b.subcategory || '', b.description || '', b.coverImage || '', b.pages || 0, ft(b.price), ft(b.purchasePrice || 0), ft(b.currentValue || b.price),
+          b.subcategory || '', b.description || '', b.coverImage || '', b.pages || 0, b.price, b.purchasePrice || 0, b.currentValue || b.price,
           b.quantity, b.availableCopies, b.issuedCopies, b.reservedCopies, b.lostCopies, b.damagedCopies, b.status, b.timesBorrowed,
           l.shelf ? ids.shelves[l.shelf] : null, l.rack || null, l.row || null, l.position || null, b.addedBy ? ids.users[b.addedBy] : null, d(b.createdAt)]
       );
@@ -175,7 +167,6 @@ async function seed() {
       await q('INSERT INTO authors (author_id, author_code, name, biography, country, profile_image) VALUES (?, ?, ?, ?, ?, ?)', [
         nextAuthor, `AUT${String(nextAuthor).padStart(3, '0')}`, h.author.name, h.author.biography, h.author.country, '',
       ]);
-      bookPrice[nextBook] = h.price;
       await q(
         `INSERT INTO books (book_id, book_code, title, isbn, author_id, category_id, publisher, publication_date, edition, language, subcategory, description,
            pages, price, purchase_price, current_value, quantity, available_copies, status, times_borrowed, shelf_id, rack, shelf_row, position, added_by, created_at)
@@ -188,21 +179,13 @@ async function seed() {
 
     // Loans = demo issues merged with their returns
     const returnsByIssue = Object.fromEntries(data.returns.map((r) => [r.issue, r]));
-    const finesByIssue = {};
-    data.fines.forEach((f) => f.issue && (finesByIssue[f.issue] = [...(finesByIssue[f.issue] || []), f]));
     for (const i of data.issues) {
       const id = num(i.transactionId);
       ids.issues[i._id] = id;
       const r = returnsByIssue[i._id];
-      const price = bookPrice[ids.books[i.book]];
-      let late = 0;
-      let dmg = 0;
-      let lost = 0;
-      if (r) {
-        late = r.daysOverdue * FINE_PER_DAY;
-        if (r.condition === 'Damaged') dmg = Math.round((price * DAMAGE_PERCENT) / 100);
-        if (r.condition === 'Lost') lost = price + LOST_FEE;
-      }
+      const late = r ? r.lateFine : 0;
+      const dmg = r ? r.damageCharge : 0;
+      const lost = r ? r.lostCharge : 0;
       await q(
         `INSERT INTO loans (loan_id, transaction_id, member_id, book_id, issued_by, issue_date, due_date, renewal_count, status, fine_amount, due_soon_notified,
            overdue_notified, return_code, return_date, return_condition, days_overdue, late_fine, damage_charge, lost_charge, remarks, processed_by, created_at)
@@ -213,46 +196,26 @@ async function seed() {
       );
     }
 
-    // Fines recalculated with the Ft policy; paid/discount/waived keep their proportions
-    const ratio = {};
-    const oldToNew = {};
     for (const f of data.fines) {
       const id = num(f.fineId);
       ids.fines[f._id] = id;
-      const bookId = f.book ? ids.books[f.book] : null;
-      let amount;
-      let description = f.description;
-      if (f.type === 'Late Fine') {
-        amount = f.daysOverdue * FINE_PER_DAY;
-        description = `${f.daysOverdue} day(s) late × ${FINE_PER_DAY} Ft/day`;
-      } else if (f.type === 'Lost Book') {
-        amount = bookPrice[bookId] + LOST_FEE;
-        description = `Replacement ${bookPrice[bookId].toLocaleString('en-US')} Ft + processing ${LOST_FEE} Ft`;
-      } else if (f.type === 'Damage') {
-        amount = Math.round((bookPrice[bookId] * DAMAGE_PERCENT) / 100);
-      } else amount = ft(f.originalAmount);
-      const k = amount / f.originalAmount;
-      ratio[f._id] = k;
-      oldToNew[f.originalAmount] = amount;
-      const scale = (v) => Math.round(v * k);
       await q(
         `INSERT INTO fines (fine_id, fine_code, member_id, loan_id, book_id, transaction_ref, type, description, days_overdue, rate_per_day, original_amount,
            discount, paid_amount, waived_amount, status, created_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, f.fineId, ids.members[f.member], f.issue ? ids.issues[f.issue] : null, bookId, f.issue ? null : f.transactionId || null, f.type, description,
-          f.daysOverdue || 0, f.type === 'Late Fine' ? FINE_PER_DAY : 0, amount, scale(f.discount), scale(f.paidAmount), scale(f.waivedAmount), f.status, d(f.createdAt)]
+        [id, f.fineId, ids.members[f.member], f.issue ? ids.issues[f.issue] : null, f.book ? ids.books[f.book] : null, f.issue ? null : f.transactionId || null, f.type,
+          f.description, f.daysOverdue || 0, f.type === 'Late Fine' ? f.ratePerDay || data.settings.finePerDay : 0, f.originalAmount, f.discount, f.paidAmount, f.waivedAmount,
+          f.status, d(f.createdAt)]
       );
     }
 
     for (const p of data.payments) {
       const id = num(p.paymentId);
-      const amount = p.fine ? Math.round(p.amount * ratio[p.fine]) : ft(p.amount);
-      const reason = String(p.reason).replace(/₹10\/day/g, `${FINE_PER_DAY} Ft/day`).replace(/₹(\d[\d,]*)/g, (_, n) => `${ft(n.replace(/,/g, '')).toLocaleString('en-US')} Ft`);
       await q(
         `INSERT INTO fine_payments (payment_id, payment_code, receipt_no, member_id, fine_id, transaction_ref, reason, amount, payment_date, method, status,
            reference, notes, received_by, created_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, p.paymentId, p.receiptNo || null, ids.members[p.member], p.fine ? ids.fines[p.fine] : null, p.transactionId || null, reason, amount, d(p.date), p.method,
+        [id, p.paymentId, p.receiptNo || null, ids.members[p.member], p.fine ? ids.fines[p.fine] : null, p.transactionId || null, p.reason, p.amount, d(p.date), p.method,
           p.status, p.reference || '', p.notes || '', ids.users[p.collectedBy] || null, d(p.createdAt)]
       );
     }
@@ -267,39 +230,32 @@ async function seed() {
       );
     }
 
-    // Notifications: amounts rewritten in Ft (fine amounts follow the recalculated fines)
-    const money = (n) => `${Number(n).toLocaleString('en-US')} Ft`;
     let nid = 0;
     for (const n of [...data.notifications].sort((a, b) => a.createdAt.localeCompare(b.createdAt))) {
       nid += 1;
-      const message = n.message
-        .replace(/₹10\/day/g, `${money(FINE_PER_DAY)}/day`)
-        .replace(/₹(\d[\d,]*)/g, (_, v) => {
-          const old = Number(v.replace(/,/g, ''));
-          return money(oldToNew[old] !== undefined ? oldToNew[old] : ft(old));
-        });
       await q('INSERT INTO notifications (notification_id, audience, member_id, type, title, message, link, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [
-        nid, n.audience, n.member ? ids.members[n.member] : null, n.type, n.title, message, n.link || '', d(n.createdAt),
+        nid, n.audience, n.member ? ids.members[n.member] : null, n.type, n.title, n.message, n.link || '', d(n.createdAt),
       ]);
       for (const u of n.readBy || []) if (ids.users[u]) await q('INSERT IGNORE INTO notification_reads (notification_id, user_id) VALUES (?, ?)', [nid, ids.users[u]]);
     }
     await q(`INSERT INTO notifications (audience, type, title, message, link) VALUES ('all', 'new-book', 'Új könyvek érkeztek', 'Az arany ember (Jókai Mór) és az Üvöltő szelek (Emily Brontë) most a Floor 1, Shelf B polcon.', 'books.html?sort=newest')`);
 
-    // Settings: this library's policy
+    // Settings: this library's policy (₹)
     const settings = {
       libraryName: data.settings.libraryName,
-      finePerDay: FINE_PER_DAY,
+      finePerDay: data.settings.finePerDay,
       loanDays: data.settings.loanDays,
       maxRenewals: data.settings.maxRenewals,
       maxBooksPerMember: data.settings.maxBooksPerMember,
-      maxPendingFine: 500,
+      maxPendingFine: data.settings.maxPendingFine,
       reservationHoldDays: data.settings.reservationHoldDays,
       reservationValidityDays: data.settings.reservationValidityDays,
-      lostProcessingFee: LOST_FEE,
-      damageChargePercent: DAMAGE_PERCENT,
-      membershipFee: ft(data.settings.membershipFee),
+      lostProcessingFee: data.settings.lostProcessingFee,
+      damageChargePercent: data.settings.damageChargePercent,
+      membershipFee: data.settings.membershipFee,
       dueSoonDays: data.settings.dueSoonDays,
       backupPath: './backups',
+      currency: 'INR', // amounts are already ₹, so convert-ft-to-inr.js leaves this database alone
     };
     for (const [k, v] of Object.entries(settings)) {
       await q('INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)', [k, String(v)]);
@@ -338,4 +294,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { seed };
+module.exports = { seed, HUNGARIAN };
