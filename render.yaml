@@ -5,8 +5,6 @@ services:
     name: lib-project
     runtime: node
     plan: free
-    # Same region as the Aiven MySQL service (DigitalOcean sgp) — every page runs many queries.
-    region: singapore
     buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /api/health
