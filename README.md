@@ -22,6 +22,14 @@ npm start                   # http://localhost:3000
 
 If port 3000 is busy, set `PORT=3100` (any free port) in `.env`.
 
+## Put it online (Render + Aiven MySQL, free)
+
+1. **Database:** at [aiven.io](https://aiven.io), create a free **MySQL** service. From its *Overview* page, note the Host, Port, User (`avnadmin`) and Password, and copy the **CA certificate** text.
+2. **App:** at [render.com](https://render.com), sign in with GitHub, choose **New → Blueprint**, and pick this repository. Render reads `render.yaml` and asks for `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_SSL_CA` (paste the whole certificate). Click **Apply**.
+3. On the first start, the app creates its tables and demo data by itself (`AUTO_SEED=true`). Your link is `https://lib-project.onrender.com`, or whatever name Render shows.
+
+The free Render plan sleeps after 15 minutes without visitors, so the first page load after a pause takes about a minute. Files written by "Back up now" don't survive a redeploy on Render.
+
 ## Demo logins (email or numeric user ID)
 
 | Role | Email | User ID | Password |
@@ -39,7 +47,9 @@ If port 3000 is busy, set `PORT=3100` (any free port) in `.env`.
 | `JWT_SECRET` | Token signing key — the server refuses to start without it |
 | `JWT_EXPIRES_IN` | Token lifetime (default `7d`) |
 | `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE` | Database connection (`library_app`) |
-| `AUTO_SEED` | `true` loads the demo data on startup when the database is empty |
+| `AUTO_SEED` | `true` creates the tables (if missing) and loads the demo data on startup when the database is empty |
+| `MYSQL_SSL_CA` | Cloud MySQL CA certificate: the PEM text, or a path to the `.pem` file. Turns on verified TLS |
+| `TRUST_PROXY` | `1` behind a hosting proxy (Render), so rate limiting sees real client addresses |
 
 ## Project layout
 

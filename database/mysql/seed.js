@@ -8,6 +8,7 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 const bcrypt = require('bcryptjs');
 const mysql = require('mysql2/promise');
+const { connectionOptions } = require('../../backend/config/connection');
 
 const PRICE_FACTOR = 4; // ₹ → Ft for book prices and membership fees
 const FINE_PER_DAY = 500;
@@ -77,14 +78,7 @@ async function seed() {
   const data = JSON.parse(JSON.stringify((await import(pathToFileURL(snapshotPath).href)).default));
   shiftDates(data, Date.now() - Date.parse(data.snapshotAt));
 
-  const conn = await mysql.createConnection({
-    host: process.env.MYSQL_HOST || 'localhost',
-    port: Number(process.env.MYSQL_PORT) || 3306,
-    user: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || '',
-    database: process.env.MYSQL_DATABASE || 'library_app',
-    charset: 'utf8mb4',
-  });
+  const conn = await mysql.createConnection(connectionOptions());
   const q = (sql, params) => conn.query(sql, params);
   const ids = { users: {}, members: {}, authors: {}, categories: {}, shelves: {}, books: {}, issues: {}, fines: {}, notifications: {} };
 

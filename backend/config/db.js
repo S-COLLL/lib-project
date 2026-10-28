@@ -1,16 +1,7 @@
 const mysql = require('mysql2/promise');
+const { connectionOptions } = require('./connection');
 
-const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST || 'localhost',
-  port: Number(process.env.MYSQL_PORT) || 3306,
-  user: process.env.MYSQL_USER || 'root',
-  password: process.env.MYSQL_PASSWORD || '',
-  database: process.env.MYSQL_DATABASE || 'library_app',
-  waitForConnections: true,
-  connectionLimit: 10,
-  decimalNumbers: true,
-  charset: 'utf8mb4',
-});
+const pool = mysql.createPool(connectionOptions({ waitForConnections: true, connectionLimit: 10, decimalNumbers: true }));
 
 /** Runs fn(connection) inside one InnoDB transaction; any thrown error rolls everything back. */
 async function tx(fn) {
@@ -33,7 +24,9 @@ async function checkSchema() {
     `SELECT COUNT(*) AS n FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name IN ('users','books','loans','settings')`
   );
   if (rows[0].n < 4) {
-    throw new Error(`Database '${process.env.MYSQL_DATABASE || 'library_app'}' has no tables. Import database/mysql/schema.sql first.`);
+    const err = new Error(`Database '${process.env.MYSQL_DATABASE || 'library_app'}' has no tables. Run "npm run setup" (or start with AUTO_SEED=true).`);
+    err.code = 'NO_SCHEMA';
+    throw err;
   }
 }
 

@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Library Management App - full-stack (Node/Express/MySQL, vanilla JS frontend)",
   "main": "backend/server.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js",

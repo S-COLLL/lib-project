@@ -16,6 +16,8 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 app.disable('x-powered-by');
+// Behind a hosting proxy (Render) set TRUST_PROXY=1 so rate limiting sees the real client address.
+if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
 // The UI loads Chart.js/jsPDF from cdnjs, fonts from Google and covers from Open Library,
 // and uses inline handlers, so Helmet's default CSP is turned off; the other headers stay on.
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
@@ -38,13 +40,27 @@ app.use(errorHandler);
 const PORT = Number(process.env.PORT) || 3000;
 
 async function start() {
+  const autoSeed = process.env.AUTO_SEED === 'true';
   try {
     await checkSchema();
   } catch (err) {
-    console.error(err.message);
-    process.exit(1);
+    if (err.code === 'NO_SCHEMA' && autoSeed) {
+      // First start on a fresh (cloud) database: build the tables and load the demo library.
+      console.log('AUTO_SEED: no tables yet, creating schema and demo data…');
+      await require('../database/mysql/setup').createSchema();
+      await require('../database/mysql/seed').seed();
+    } else {
+      if (err.code === 'ER_ACCESS_DENIED_ERROR') {
+        console.error(`MySQL refused the login for "${process.env.MYSQL_USER || 'root'}". Put your MySQL password in .env (MYSQL_PASSWORD=...), save the file, then run npm start again.`);
+      } else if (err.code === 'ECONNREFUSED') {
+        console.error('Cannot reach MySQL. Is the MySQL service running? Check MYSQL_HOST / MYSQL_PORT in .env.');
+      } else {
+        console.error(err.message);
+      }
+      process.exit(1);
+    }
   }
-  if (process.env.AUTO_SEED === 'true') {
+  if (autoSeed) {
     const [[{ n }]] = await pool.query('SELECT COUNT(*) AS n FROM users');
     if (n === 0) {
       console.log('AUTO_SEED: database is empty, loading demo data…');

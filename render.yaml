@@ -1,0 +1,37 @@
+# Render Blueprint — New → Blueprint → pick this repository.
+# Render asks for the values marked "sync: false" (your cloud MySQL details).
+services:
+  - type: web
+    name: lib-project
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: TRUST_PROXY
+        value: "1"
+      # Creates the tables and demo data on the first start when the database is empty.
+      - key: AUTO_SEED
+        value: "true"
+      - key: MYSQL_HOST
+        sync: false
+      - key: MYSQL_PORT
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: MYSQL_DATABASE
+        value: defaultdb
+      # Paste the CA certificate text from your MySQL provider (Aiven: "CA certificate").
+      - key: MYSQL_SSL_CA
+        sync: false
