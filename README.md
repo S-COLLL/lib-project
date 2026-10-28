@@ -1,4 +1,5 @@
 # Library Management App
+SmartLib
 
 A full-stack library system: catalogue with exact shelf locations, issue / return / renew, reservations with hold queue, automatic late fines (500 Ft/day), payments, reports, a rule-based AI assistant and notifications.
 
