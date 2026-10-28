@@ -61,3 +61,5 @@ docs/      PROJECT_DOCUMENTATION.md · MANUAL_TEST_SCRIPT.md
 ```
 
 Full design, API and test results: [docs/PROJECT_DOCUMENTATION.md](docs/PROJECT_DOCUMENTATION.md).
+
+http://192.168.1.6:3001.
