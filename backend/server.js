@@ -25,7 +25,33 @@ app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, max: 2000, standardHeaders: true, legacyHeaders: false }));
 
-app.get('/api/health', (req, res) => res.json({ success: true, status: 'ok', mode: 'mysql' }));
+// /api/health?db=1 also checks the database and reports which settings are present
+// (never their values), so a hosted deployment can be diagnosed without its logs.
+app.get('/api/health', async (req, res) => {
+  const out = { success: true, status: 'ok', mode: 'mysql' };
+  if (req.query.db !== undefined) {
+    const has = (k) => (process.env[k] ? 'set' : 'missing');
+    const ca = process.env.MYSQL_SSL_CA || '';
+    out.settings = {
+      MYSQL_HOST: has('MYSQL_HOST'),
+      MYSQL_PORT: has('MYSQL_PORT'),
+      MYSQL_USER: has('MYSQL_USER'),
+      MYSQL_PASSWORD: has('MYSQL_PASSWORD'),
+      MYSQL_DATABASE: has('MYSQL_DATABASE'),
+      MYSQL_SSL_CA: !ca ? 'missing' : !ca.includes('-----BEGIN') ? 'file path' : ca.includes('-----END') ? 'certificate' : 'certificate (incomplete)',
+      JWT_SECRET: has('JWT_SECRET'),
+    };
+    try {
+      await pool.query('SELECT 1');
+      out.database = 'connected';
+    } catch (e) {
+      out.success = false;
+      out.database = 'error';
+      out.code = e.code || 'UNKNOWN';
+    }
+  }
+  res.status(out.success ? 200 : 503).json(out);
+});
 
 // Serverless (Vercel) has no always-on process for the hourly timer, so the first API
 // request each hour (per instance) runs the maintenance job instead.
