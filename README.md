@@ -22,13 +22,27 @@ npm start                   # http://localhost:3000
 
 If port 3000 is busy, set `PORT=3100` (any free port) in `.env`.
 
-## Put it online (Render + Aiven MySQL, free)
+## Put it online (Vercel + cloud MySQL)
 
-1. **Database:** at [aiven.io](https://aiven.io), create a free **MySQL** service. From its *Overview* page, note the Host, Port, User (`avnadmin`) and Password, and copy the **CA certificate** text.
-2. **App:** at [render.com](https://render.com), sign in with GitHub, choose **New → Blueprint**, and pick this repository. Render reads `render.yaml` and asks for `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD` and `MYSQL_SSL_CA` (paste the whole certificate). Click **Apply**.
-3. On the first start, the app creates its tables and demo data by itself (`AUTO_SEED=true`). Your link is `https://lib-project.onrender.com`, or whatever name Render shows.
+`vercel.json` serves `frontend/` from Vercel's CDN and runs the API (`api/index.js` → the same Express app) as a serverless function in **Mumbai (`bom1`)**.
 
-The free Render plan sleeps after 15 minutes without visitors, so the first page load after a pause takes about a minute. Files written by "Back up now" don't survive a redeploy on Render.
+1. **Database:** create a cloud MySQL database, for example a free **MySQL** service at [aiven.io](https://aiven.io). Note the Host, Port, User and Password, and copy the **CA certificate**.
+2. **Tables and demo data** (one time, from your PC): run `npm run setup` with `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE` and `MYSQL_SSL_CA` pointing at the cloud database.
+3. **App:** at [vercel.com](https://vercel.com), sign in with GitHub, choose **Add New → Project**, and import this repository. Under **Environment Variables**, add:
+
+   | Variable | Value |
+   |---|---|
+   | `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD` | from the database provider |
+   | `MYSQL_DATABASE` | e.g. `defaultdb` (Aiven) |
+   | `MYSQL_SSL_CA` | the whole CA certificate text |
+   | `JWT_SECRET` | a long random string |
+   | `MYSQL_POOL_SIZE` | `3` |
+   | `TRUST_PROXY` | `1` |
+   | `NODE_ENV` | `production` |
+
+   Click **Deploy**. Your link is `https://<project>.vercel.app`.
+
+On Vercel, the overdue/expiry upkeep runs on the first API request each hour instead of on a timer, and "Back up now" can't write files (the filesystem is read-only). `render.yaml` is also included if you prefer Render (it runs `AUTO_SEED`, so step 2 isn't needed there).
 
 ## Demo logins (email or numeric user ID)
 

@@ -26,6 +26,20 @@ app.use(express.json({ limit: '2mb' }));
 app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, max: 2000, standardHeaders: true, legacyHeaders: false }));
 
 app.get('/api/health', (req, res) => res.json({ success: true, status: 'ok', mode: 'mysql' }));
+
+// Serverless (Vercel) has no always-on process for the hourly timer, so the first API
+// request each hour (per instance) runs the maintenance job instead.
+if (process.env.VERCEL) {
+  let lastMaintenance = 0;
+  app.use('/api', async (_req, _res, next) => {
+    if (Date.now() - lastMaintenance > 60 * 60 * 1000) {
+      lastMaintenance = Date.now();
+      await runMaintenance().catch((e) => console.error('Maintenance failed:', e.message));
+    }
+    next();
+  });
+}
+
 for (const name of ['auth', 'books', 'authors', 'categories', 'shelves', 'members', 'issues', 'returns', 'reservations', 'fines', 'payments', 'notifications', 'settings', 'reports', 'ai']) {
   app.use(`/api/${name}`, require(`./routes/${name}`));
 }

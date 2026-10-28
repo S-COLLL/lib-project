@@ -1,7 +1,17 @@
 const mysql = require('mysql2/promise');
 const { connectionOptions } = require('./connection');
 
-const pool = mysql.createPool(connectionOptions({ waitForConnections: true, connectionLimit: 10, decimalNumbers: true }));
+// Serverless hosts (Vercel) run many small instances: keep each pool small (MYSQL_POOL_SIZE=3) and drop idle connections.
+const pool = mysql.createPool(
+  connectionOptions({
+    waitForConnections: true,
+    connectionLimit: Number(process.env.MYSQL_POOL_SIZE) || 10,
+    maxIdle: Number(process.env.MYSQL_POOL_SIZE) || 10,
+    idleTimeout: 60000,
+    enableKeepAlive: true,
+    decimalNumbers: true,
+  })
+);
 
 /** Runs fn(connection) inside one InnoDB transaction; any thrown error rolls everything back. */
 async function tx(fn) {
