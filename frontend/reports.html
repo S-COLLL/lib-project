@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .report-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .report-card { text-align: left; border: 1px solid var(--border); background: var(--card); border-radius: 16px; padding: 16px; cursor: pointer; transition: all var(--med) var(--ease); box-shadow: var(--shadow); }
+    .report-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow-lg); }
+    .report-card.active { border-color: var(--accent); background: var(--teal-bg); box-shadow: 0 0 0 3px rgba(20,184,166,.15); }
+    .report-card .rc-icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--tone-bg); color: var(--tone); margin-bottom: 10px; }
+    .report-card .rc-icon svg { width: 19px; height: 19px; }
+    .report-card strong { display: block; }
+    .report-card small { color: var(--text-2); font-size: 12px; }
+    .print-head { display: none; }
+    @media print { .print-head { display: block; margin-bottom: 12px; } .report-grid, .report-toolbar { display: none !important; } .table th { position: static; } }
+  </style>
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Reports</div>
+        <h1>Reports</h1>
+        <p class="subtitle">Generate live reports from the database — print, or export as CSV and PDF.</p>
+      </div>
+    </div>
+    <div class="report-grid" id="reportGrid"></div>
+    <div class="card" id="reportCard">
+      <div class="card-head report-toolbar">
+        <div><h2 id="reportTitle">Select a report</h2><div class="ch-sub" id="reportMeta"></div></div>
+        <div class="row wrap">
+          <input class="input" type="date" id="from" style="width:auto" aria-label="From date" title="From">
+          <input class="input" type="date" id="to" style="width:auto" aria-label="To date" title="To">
+          <button class="btn" id="printBtn"></button>
+          <button class="btn" id="csvBtn"></button>
+          <button class="btn btn-primary" id="pdfBtn"></button>
+        </div>
+      </div>
+      <div class="print-head"><h2 id="printTitle"></h2><div class="small" id="printMeta"></div></div>
+      <div class="card-body">
+        <div class="table-wrap" id="reportTable"></div>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="js/reports.js"></script>
+</body>
+</html>

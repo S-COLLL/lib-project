@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .member-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
+    .member-stats div { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; }
+    .member-stats small { display: block; font-size: 11.5px; color: var(--text-2); }
+    .member-stats strong { font-size: 20px; font-variant-numeric: tabular-nums; }
+    .profile-head { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+    .expiry-bar { margin-top: 6px; }
+    @media (max-width: 600px) { .member-stats { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Members</div>
+        <h1 id="pageTitle">Members</h1>
+        <p class="subtitle" id="memberCount">Library memberships, borrowing history and dues.</p>
+      </div>
+      <div class="page-actions" id="pageActions"></div>
+    </div>
+    <div id="content">
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="input-group">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input class="input" type="search" id="search" placeholder="Search by name, member ID, email, phone, department…" aria-label="Search members">
+          </div>
+          <select class="select" id="type" style="width:auto" aria-label="Membership type"><option value="">All types</option><option>Student</option><option>Faculty</option><option>Staff</option><option>Premium</option><option>Guest</option></select>
+          <select class="select" id="sort" style="width:auto" aria-label="Sort"><option value="newest">Newest</option><option value="name">Name A–Z</option><option value="fine">Highest dues</option><option value="expiry">Expiring soon</option></select>
+        </div>
+        <div class="filters-bar" style="padding:0 20px 14px"><div class="chips" id="statusChips"></div></div>
+        <div class="table-wrap"><table class="table">
+          <thead><tr><th>Member</th><th>Member ID</th><th>Department / Course</th><th>Type</th><th>Expiry</th><th>Issued</th><th>Returned</th><th>Pending fine</th><th>Paid</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="js/members.js"></script>
+</body>
+</html>

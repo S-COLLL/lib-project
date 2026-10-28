@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authors · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .entity-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .entity-card { padding: 18px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; transition: transform var(--med) var(--ease), box-shadow var(--med) var(--ease), border-color var(--med); }
+    .entity-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+    .entity-card .bio { font-size: 13px; color: var(--text-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .entity-card .ec-foot { display: flex; gap: 14px; font-size: 12.5px; color: var(--text-2); margin-top: auto; }
+    .entity-card .ec-foot strong { color: var(--text); }
+    .author-books { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
+    .author-books a { color: var(--text); text-decoration: none; font-size: 12.5px; font-weight: 500; }
+    .author-books .cover { width: 100%; margin-bottom: 6px; --cf-size: 12px; transition: transform var(--med) var(--ease); }
+    .author-books a:hover .cover { transform: translateY(-3px); }
+  </style>
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Authors</div>
+        <h1>Authors</h1>
+        <p class="subtitle" id="count">Writers in the collection and their books.</p>
+      </div>
+      <div class="page-actions" id="pageActions"></div>
+    </div>
+    <div class="card card-pad" style="margin-bottom:18px;padding:14px">
+      <div class="input-group">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="input" type="search" id="search" placeholder="Search authors…" aria-label="Search authors">
+      </div>
+    </div>
+    <div class="entity-grid" id="grid"></div>
+  </main>
+  <script type="module" src="js/authors.js"></script>
+</body>
+</html>

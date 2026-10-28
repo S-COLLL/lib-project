@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservations · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Reservations</div>
+        <h1>Reservations</h1>
+        <p class="subtitle">Members queue for unavailable books and are notified when a copy is held for them.</p>
+      </div>
+      <div class="page-actions"><button class="btn btn-primary" id="newRes"></button></div>
+    </div>
+    <div class="card">
+      <div class="table-toolbar"><div class="tabs" id="tabs"></div></div>
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th>Reservation ID</th><th>Member</th><th>Book</th><th>Reserved on</th><th>Queue</th><th>Expiry</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </main>
+  <script type="module" src="js/reservations.js"></script>
+</body>
+</html>

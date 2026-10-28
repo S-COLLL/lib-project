@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue Books · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / <span id="crumb">Issue Books</span></div>
+        <h1 id="title">Issue books</h1>
+        <p class="subtitle" id="subtitle">Lend books to members, track due dates and renewals.</p>
+      </div>
+      <div class="page-actions" id="pageActions"></div>
+    </div>
+
+    <div class="card">
+      <div class="table-toolbar">
+        <div class="tabs" id="statusTabs" role="tablist" aria-label="Status"></div>
+        <div class="input-group" id="searchGroup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="input" type="search" id="search" placeholder="Transaction ID, member, book…" aria-label="Search transactions">
+        </div>
+        <input class="input" type="date" id="from" style="width:auto" aria-label="Issued from">
+        <input class="input" type="date" id="to" style="width:auto" aria-label="Issued to">
+      </div>
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th>Transaction ID</th><th id="memberCol">Member</th><th>Book</th><th>Issue date</th><th>Due date</th><th>Return date</th><th>Renewals</th><th id="staffCol">Staff</th><th>Status</th><th>Fine</th><th style="text-align:right">Actions</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </main>
+  <script type="module" src="js/issues.js"></script>
+</body>
+</html>

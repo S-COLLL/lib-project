@@ -1,0 +1,257 @@
+/* ============================== Books ============================== */
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 0 20px 14px;
+}
+.filters-bar .select {
+  width: auto;
+  min-width: 150px;
+  height: 36px;
+  font-size: 13px;
+}
+.view-toggle .tab {
+  padding: 6px 10px;
+  display: inline-flex;
+}
+.view-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+  padding: 4px 20px 20px;
+}
+.book-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform var(--med) var(--ease), box-shadow var(--med) var(--ease), border-color var(--med);
+}
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+}
+.book-card .bc-cover {
+  padding: 18px 18px 0;
+  background: linear-gradient(180deg, var(--card-2), var(--card));
+  display: flex;
+  justify-content: center;
+  perspective: 800px;
+}
+.book-card .cover {
+  width: 118px;
+  --cf-size: 12px;
+  transition: transform var(--slow) var(--ease), box-shadow var(--slow) var(--ease);
+  transform-origin: left center;
+}
+.book-card:hover .cover {
+  transform: rotateY(-14deg) translateX(-4px);
+  box-shadow: 12px 10px 24px rgba(15, 23, 42, 0.25);
+}
+.book-card .bc-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.book-card .bc-title {
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.book-card .bc-author {
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+.book-card .bc-foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+}
+.book-card .bc-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 16px;
+}
+.book-card .bc-actions .btn {
+  flex: 1;
+}
+.book-card .bc-check {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+}
+.copies {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.copies small {
+  color: var(--text-2);
+  font-weight: 400;
+}
+
+/* Book details */
+.detail-hero {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 32px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.detail-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 150px;
+  background: var(--grad-premium);
+  opacity: 0.07;
+}
+.detail-hero > * {
+  position: relative;
+}
+.detail-cover .cover {
+  width: 100%;
+  --cf-size: 22px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.28);
+  animation: coverIn 700ms var(--ease);
+}
+@keyframes coverIn {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateY(-25deg) translateY(12px);
+  }
+}
+.detail-title {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  color: var(--text-2);
+  margin: 10px 0 16px;
+}
+.detail-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.detail-meta svg {
+  width: 15px;
+  height: 15px;
+}
+.avail-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+.avail-cell {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: var(--card);
+}
+.avail-cell small {
+  font-size: 11.5px;
+  color: var(--text-2);
+  display: block;
+}
+.avail-cell strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.avail-cell.hl {
+  border-color: var(--success);
+  background: var(--success-bg);
+}
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.copy-meter {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.copy-meter i {
+  width: 14px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--success);
+  opacity: 0.85;
+  animation: pop var(--med) var(--ease) both;
+}
+.copy-meter i.issued {
+  background: var(--info);
+}
+.copy-meter i.reserved {
+  background: var(--gold);
+}
+.copy-meter i.lost {
+  background: var(--darkred);
+}
+.copy-meter i.damaged {
+  background: var(--warning);
+}
+
+@media (max-width: 900px) {
+  .detail-hero {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  .detail-cover {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+  .avail-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .detail-title {
+    font-size: 24px;
+  }
+}
+@media (max-width: 480px) {
+  .book-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 4px 12px 16px;
+  }
+  .book-card .cover {
+    width: 90px;
+  }
+  .book-card .bc-actions {
+    display: none;
+  }
+  .filters-bar .select {
+    flex: 1;
+    min-width: 45%;
+  }
+}

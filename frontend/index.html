@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in · SmartLib</title>
+  <meta name="description" content="SmartLib — AI powered library management system">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    body { background: #020617; color: #e2e8f0; overflow-x: hidden; }
+    .auth { position: relative; min-height: 100vh; display: grid; grid-template-columns: 1.1fr 1fr; background: radial-gradient(1200px 600px at 10% 10%, rgba(15,118,110,.35), transparent 60%), radial-gradient(900px 500px at 90% 90%, rgba(20,184,166,.15), transparent 60%), linear-gradient(135deg, #020617, #0f172a 55%, #0b2a2a); }
+    #particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .auth-hero { position: relative; padding: 48px 56px; display: flex; flex-direction: column; justify-content: space-between; z-index: 1; }
+    .auth-hero .brand { display: flex; align-items: center; gap: 12px; color: #fff; }
+    .auth-hero .brand strong { font-size: 20px; } .auth-hero .brand strong span { color: var(--gold); }
+    .hero-copy h1 { color: #fff; font-size: clamp(32px, 4vw, 50px); line-height: 1.08; letter-spacing: -0.03em; max-width: 560px; }
+    .hero-copy h1 em { font-style: normal; background: linear-gradient(135deg, #14b8a6, #5eead4); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-copy p { color: #94a3b8; font-size: 16px; margin-top: 16px; max-width: 480px; }
+    .hero-feats { display: grid; grid-template-columns: repeat(2, minmax(0, 220px)); gap: 12px; margin-top: 28px; }
+    .hero-feat { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 12px; background: rgba(148,163,184,.06); border: 1px solid rgba(148,163,184,.12); color: #cbd5e1; font-size: 13px; opacity: 0; animation: rise .6s var(--ease) forwards; }
+    .hero-feat svg { width: 18px; height: 18px; color: var(--cyan); flex-shrink: 0; }
+    .shelf-art { position: absolute; right: 6%; bottom: 10%; display: flex; align-items: flex-end; gap: 6px; opacity: .55; }
+    .shelf-art span { width: 18px; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, rgba(20,184,166,.5), rgba(15,118,110,.15)); border: 1px solid rgba(94,234,212,.25); animation: spineIn 1s var(--ease) both; }
+    .shelf-art span.g { background: linear-gradient(180deg, rgba(212,167,44,.55), rgba(212,167,44,.1)); border-color: rgba(234,191,74,.35); }
+    .shelf-art::after { content: ''; position: absolute; left: -10px; right: -10px; bottom: -6px; height: 4px; border-radius: 2px; background: rgba(148,163,184,.35); }
+    @keyframes spineIn { from { transform: scaleY(0); transform-origin: bottom; } to { transform: scaleY(1); transform-origin: bottom; } }
+    .auth-panel { position: relative; z-index: 1; display: grid; place-items: center; padding: 32px 24px; }
+    .glass { width: 100%; max-width: 440px; padding: 32px; border-radius: 22px; background: rgba(15, 23, 42, .55); border: 1px solid rgba(148,163,184,.18); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06); animation: modalIn .7s var(--ease); }
+    .glass h2 { color: #fff; font-size: 24px; } .glass .sub { color: #94a3b8; margin: 6px 0 22px; }
+    .glass .tabs { background: rgba(2,6,23,.5); border-color: rgba(148,163,184,.15); width: 100%; margin-bottom: 20px; }
+    .glass .tab { flex: 1; color: #94a3b8; } .glass .tab.active { background: rgba(20,184,166,.16); color: #5eead4; box-shadow: none; }
+    .glass .field label { color: #cbd5e1; }
+    .glass .input, .glass .select { background: rgba(2,6,23,.55); border-color: rgba(148,163,184,.2); color: #f8fafc; height: 44px; }
+    .glass .input::placeholder { color: #64748b; }
+    .glass .input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(20,184,166,.2); }
+    .glass .input-group > svg { color: #64748b; }
+    .glass .btn-primary { height: 46px; font-size: 15px; background: var(--grad-teal); border: 0; }
+    .glass .btn-primary:hover { box-shadow: 0 10px 30px rgba(20,184,166,.35); }
+    .pw-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: 0; color: #64748b; cursor: pointer; padding: 6px; }
+    .pw-toggle svg { width: 18px; height: 18px; }
+    .demo { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(148,163,184,.14); }
+    .demo p { font-size: 12px; color: #64748b; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .08em; }
+    .demo-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .demo-btn { display: flex; flex-direction: column; align-items: flex-start; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(148,163,184,.16); background: rgba(2,6,23,.4); color: #e2e8f0; cursor: pointer; text-align: left; transition: all var(--fast) var(--ease); }
+    .demo-btn:hover { border-color: var(--cyan); transform: translateY(-1px); }
+    .demo-btn strong { font-size: 12.5px; text-transform: capitalize; } .demo-btn small { color: #64748b; font-size: 11px; }
+    .form-alert { margin-bottom: 14px; color: #e2e8f0; }
+    .form-alert strong { color: #fff; }
+    .glass .field-error { color: #fca5a5; }
+    .glass .form-grid { gap: 12px; }
+    .auth-foot { margin-top: 18px; text-align: center; color: #64748b; font-size: 12px; }
+    .theme-float { position: absolute; top: 20px; right: 20px; z-index: 2; color: #cbd5e1; }
+    @media (max-width: 960px) { .auth { grid-template-columns: 1fr; } .auth-hero { padding: 28px 24px 0; } .hero-feats, .shelf-art, .hero-copy p { display: none; } .hero-copy h1 { font-size: 28px; margin-top: 18px; } }
+  </style>
+</head>
+<body>
+  <div class="auth">
+    <canvas id="particles" aria-hidden="true"></canvas>
+    <section class="auth-hero">
+      <div class="brand"><span class="brand-mark" id="brandMark"></span><strong>Smart<span>Lib</span></strong></div>
+      <div class="hero-copy">
+        <h1>The intelligent way to run your <em>library</em>.</h1>
+        <p>Catalogue, circulation, exact shelf locations, fines and payments — with an AI assistant that finds any book in seconds.</p>
+        <div class="hero-feats" id="heroFeats"></div>
+      </div>
+      <div class="shelf-art" aria-hidden="true" id="shelfArt"></div>
+      <div class="small" style="color:#475569">© <span id="yr"></span> SmartLib · Academic Library Platform</div>
+    </section>
+    <section class="auth-panel">
+      <button class="icon-btn theme-float theme-toggle" id="themeBtn" aria-label="Toggle theme"></button>
+      <div class="glass">
+        <h2 id="formTitle">Welcome back</h2>
+        <p class="sub" id="formSub">Sign in to continue to your dashboard.</p>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="login" role="tab">Sign in</button>
+          <button class="tab" data-tab="register" role="tab">Create account</button>
+        </div>
+        <div id="formAlert"></div>
+        <form id="loginForm" method="post" action="index.html" novalidate class="stack" style="gap:14px">
+          <div class="field"><label for="l-email">Email or user ID</label><div class="input-group" id="emailGroup"><input class="input" type="text" id="l-email" name="email" required autocomplete="username" placeholder="you@college.edu or 1"></div></div>
+          <div class="field"><label for="l-pass">Password</label><div class="input-group" id="passGroup" style="position:relative"><input class="input" type="password" id="l-pass" name="password" required autocomplete="current-password" placeholder="••••••••"></div></div>
+          <button class="btn btn-primary btn-block" id="loginBtn" type="submit">Sign in</button>
+        </form>
+        <form id="registerForm" method="post" action="index.html" novalidate class="form-grid hidden">
+          <div class="field full"><label for="r-name">Full name</label><input class="input" id="r-name" name="name" required minlength="2" placeholder="Aarav Sharma"></div>
+          <div class="field full"><label for="r-email">College email</label><input class="input" type="email" id="r-email" name="email" required placeholder="you@college.edu"></div>
+          <div class="field"><label for="r-phone">Phone</label><input class="input" id="r-phone" name="phone" pattern="[+0-9][0-9 \-]{7,15}" title="Enter a valid phone number" placeholder="+91 98765 43210"></div>
+          <div class="field"><label for="r-dept">Department</label><input class="input" id="r-dept" name="department" placeholder="Computer Science"></div>
+          <div class="field"><label for="r-course">Course</label><input class="input" id="r-course" name="course" placeholder="B.Tech"></div>
+          <div class="field"><label for="r-year">Year</label><select class="select" id="r-year" name="year"><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>Postgraduate</option></select></div>
+          <div class="field full"><label for="r-pass">Password</label><input class="input" type="password" id="r-pass" name="password" required minlength="6" placeholder="At least 6 characters" autocomplete="new-password"></div>
+          <div class="field full"><label for="r-pass2">Confirm password</label><input class="input" type="password" id="r-pass2" name="password2" required placeholder="Repeat password" autocomplete="new-password"></div>
+          <button class="btn btn-primary btn-block full" id="registerBtn" type="submit">Create student account</button>
+        </form>
+        <div class="demo" id="demoBox">
+          <p>Demo accounts — click to sign in</p>
+          <div class="demo-grid" id="demoGrid"></div>
+        </div>
+        <div class="auth-foot">Protected with JWT authentication &amp; bcrypt password hashing</div>
+      </div>
+    </section>
+  </div>
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>

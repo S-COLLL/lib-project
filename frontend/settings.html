@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .settings-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
+    .settings-nav { position: sticky; top: calc(var(--topbar-h) + 20px); display: flex; flex-direction: column; gap: 4px; }
+    .settings-nav a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; color: var(--text-2); font-weight: 500; text-decoration: none; }
+    .settings-nav a:hover { background: var(--card-2); color: var(--text); }
+    .settings-nav svg { width: 17px; height: 17px; }
+    .theme-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .theme-card { border: 2px solid var(--border); border-radius: 14px; padding: 10px; cursor: pointer; background: var(--card); text-align: left; transition: all var(--med) var(--ease); }
+    .theme-card.active { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(20,184,166,.15); }
+    .theme-card .tc-prev { height: 70px; border-radius: 8px; margin-bottom: 8px; display: grid; grid-template-columns: 28% 1fr; overflow: hidden; border: 1px solid var(--border); }
+    .tc-light .tc-prev { background: #f8fafc; } .tc-light .tc-prev span:first-child { background: #0f172a; }
+    .tc-dark .tc-prev { background: #020617; } .tc-dark .tc-prev span:first-child { background: #0f172a; border-right: 1px solid #334155; }
+    .tc-system .tc-prev { background: linear-gradient(90deg, #f8fafc 50%, #020617 50%); } .tc-system .tc-prev span:first-child { background: #0f172a; }
+    .tc-prev span:last-child { margin: 10px; border-radius: 6px; background: #14b8a6; opacity: .5; height: 12px; }
+    @media (max-width: 900px) { .settings-layout { grid-template-columns: minmax(0, 1fr); } .settings-nav { position: static; flex-direction: row; overflow-x: auto; } .theme-cards { grid-template-columns: 1fr 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Settings</div>
+        <h1>Settings</h1>
+        <p class="subtitle">Appearance, your profile, library policies and user accounts.</p>
+      </div>
+    </div>
+    <div class="settings-layout">
+      <nav class="settings-nav" id="snav"></nav>
+      <div class="stack" id="sections"></div>
+    </div>
+  </main>
+  <script type="module" src="js/settings.js"></script>
+</body>
+</html>

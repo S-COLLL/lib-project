@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Return Books · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .return-layout { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 20px; align-items: start; }
+    .lookup-hero { padding: 22px; }
+    .lookup-hero .input-group .input { height: 50px; font-size: 15px; }
+    .result-card { display: flex; gap: 14px; align-items: center; padding: 14px; border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: all var(--med) var(--ease); background: var(--card); }
+    .result-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .result-card.active { border-color: var(--accent); background: var(--teal-bg); box-shadow: 0 0 0 3px rgba(20,184,166,.15); }
+    .result-card .late { font-weight: 700; color: var(--error); text-align: right; font-variant-numeric: tabular-nums; }
+    .cond-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .cond { border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; font-weight: 500; transition: all var(--fast); }
+    .cond input { position: absolute; opacity: 0; }
+    .cond.active { border-color: var(--accent); background: var(--teal-bg); color: var(--accent-text); }
+    .cond.active.dmg { border-color: var(--warning); background: var(--warning-bg); color: var(--warning); }
+    .cond.active.lost { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+    .overdue-banner { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; background: var(--error-bg); margin: 14px 0; }
+    .overdue-banner.ok { background: var(--success-bg); }
+    .overdue-banner .ob-days { font-size: 30px; font-weight: 800; letter-spacing: -.03em; color: var(--error); line-height: 1; }
+    .overdue-banner.ok .ob-days { color: var(--success); }
+    @media (max-width: 1100px) { .return-layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Return Books</div>
+        <h1>Return books</h1>
+        <p class="subtitle">Find the loan, check the book's condition and the fine is calculated automatically.</p>
+      </div>
+    </div>
+
+    <div class="return-layout">
+      <div class="stack">
+        <div class="card lookup-hero">
+          <form id="lookupForm" class="row">
+            <div class="input-group" style="flex:1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input class="input" id="q" placeholder="Transaction ID, Member ID, Book ID or ISBN (e.g. TXN00010, MEM0009, BK0011)" aria-label="Search loans" autocomplete="off">
+            </div>
+            <button class="btn btn-primary btn-lg" id="lookupBtn">Find</button>
+          </form>
+          <div class="chips" style="margin-top:12px" id="quickChips"></div>
+        </div>
+        <div id="results" class="stack" style="gap:10px"></div>
+      </div>
+      <aside class="card" id="returnPanel" style="position:sticky;top:calc(var(--topbar-h) + 20px)"></aside>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <div class="card-head"><div><h2>Recent returns</h2><div class="ch-sub">Latest books checked back in</div></div></div>
+      <div class="card-body" style="padding-top:12px">
+        <div class="table-wrap"><table class="table">
+          <thead><tr><th>Return ID</th><th>Transaction</th><th>Member</th><th>Book</th><th>Issue date</th><th>Due date</th><th>Return date</th><th>Days overdue</th><th>Condition</th><th>Fine</th></tr></thead>
+          <tbody id="recent"></tbody>
+        </table></div>
+        <div class="pagination" id="pagination" style="padding:14px 0 0"></div>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="js/returns.js"></script>
+</body>
+</html>

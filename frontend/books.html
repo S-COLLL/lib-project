@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Books · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/books.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Books</div>
+        <h1>Books</h1>
+        <p class="subtitle" id="bookCount">Browse the catalogue, find exact shelf locations and manage inventory.</p>
+      </div>
+      <div class="page-actions" id="pageActions"></div>
+    </div>
+
+    <div class="card">
+      <div class="table-toolbar">
+        <div class="input-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="input" type="search" id="search" placeholder="Search by name, ISBN, author, publisher, category, Book ID, shelf, rack, language…" aria-label="Search books">
+        </div>
+        <select class="select" id="sort" aria-label="Sort" style="width:auto">
+          <option value="az">Name A–Z</option>
+          <option value="za">Name Z–A</option>
+          <option value="newest" selected>Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="price_asc">Price: Low–High</option>
+          <option value="price_desc">Price: High–Low</option>
+          <option value="popular">Most Borrowed</option>
+        </select>
+        <div class="tabs view-toggle" role="tablist" aria-label="View">
+          <button class="tab active" data-view="table" title="Table view" aria-label="Table view"></button>
+          <button class="tab" data-view="grid" title="Grid view" aria-label="Grid view"></button>
+        </div>
+      </div>
+      <div class="filters-bar">
+        <div class="chips" id="statusChips" role="group" aria-label="Status filter"></div>
+        <select class="select" id="category" aria-label="Category"><option value="">All categories</option></select>
+        <select class="select" id="language" aria-label="Language"><option value="">All languages</option></select>
+        <select class="select" id="floor" aria-label="Floor"><option value="">All floors</option></select>
+      </div>
+      <div class="bulk-bar hidden" id="bulkBar"></div>
+      <div id="results"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </main>
+  <script type="module" src="js/books.js"></script>
+</body>
+</html>

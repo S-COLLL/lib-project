@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fines · SmartLib</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <script src="js/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <main class="page" id="page">
+    <div class="page-head">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Fines</div>
+        <h1>Fines &amp; charges</h1>
+        <p class="subtitle" id="policy">Late fines, lost and damaged book charges, discounts and waivers.</p>
+      </div>
+      <div class="page-actions" id="pageActions"></div>
+    </div>
+    <div class="stats-grid" id="stats" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div>
+    <div class="card">
+      <div class="table-toolbar">
+        <div class="tabs" id="tabs"></div>
+        <div class="input-group" id="searchWrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="input" type="search" id="search" placeholder="Fine ID, transaction, member…" aria-label="Search fines">
+        </div>
+        <select class="select" id="type" style="width:auto" aria-label="Fine type"><option value="">All types</option><option>Late Fine</option><option>Lost Book</option><option>Damage</option><option>Replacement</option><option>Membership Fee</option><option>Other</option></select>
+      </div>
+      <div class="table-wrap"><table class="table">
+        <thead><tr><th>Fine ID</th><th>Member</th><th>Type</th><th>Transaction / Book</th><th>Details</th><th>Original</th><th>Discount</th><th>Paid</th><th>Remaining</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </main>
+  <script type="module" src="js/fines.js"></script>
+</body>
+</html>
