@@ -7,6 +7,5 @@
   "functions": {
     "api/index.js": { "maxDuration": 30, "includeFiles": "frontend/js/demo/{demo-data.js,package.json}" }
   },
-  "redirects": [{ "source": "/demo", "destination": "/?demo=1", "permanent": false }],
   "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }]
 }
