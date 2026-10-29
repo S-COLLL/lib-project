@@ -66,17 +66,19 @@ function qs(params) {
 
 /**
  * Demo mode: the whole backend runs in the browser (js/demo/demo-api.js) with data in
- * localStorage. On automatically for static hosting (GitHub Pages), or with ?demo=1.
- * Leave it with ?demo=0.
+ * localStorage. Always on for static hosting (GitHub Pages) and for a separate demo
+ * deployment whose host name has "demo" in it (e.g. smartlib-demo.vercel.app); being a
+ * different site, it never affects the real one. Elsewhere on with ?demo=1, off with ?demo=0.
  */
 function detectDemo() {
+  const demoHost = location.hostname.endsWith('github.io') || /(^|-)demo(-|$)/.test(location.hostname.split('.')[0]);
   try {
     const flag = new URLSearchParams(location.search).get('demo');
     if (flag === '1') localStorage.setItem('smartlib-demo', '1');
     if (flag === '0') localStorage.removeItem('smartlib-demo');
-    return location.hostname.endsWith('github.io') || localStorage.getItem('smartlib-demo') === '1';
+    return demoHost || localStorage.getItem('smartlib-demo') === '1';
   } catch {
-    return location.hostname.endsWith('github.io');
+    return demoHost;
   }
 }
 export const DEMO_MODE = detectDemo();
