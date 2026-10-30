@@ -2,7 +2,6 @@ package com.smartlib.config;
 
 import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +10,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
@@ -31,20 +32,9 @@ public class DataSourceConfig {
 
     @Bean
     public DataSource dataSource(Environment env) throws Exception {
-        // Values pasted into a hosting dashboard often carry spaces or line breaks; the host may also be
-        // pasted as "host:port" or as a whole service URI (mysql://user:pass@host:port/db).
-        String host = setting(env, "MYSQL_HOST", "localhost");
-        String port = setting(env, "MYSQL_PORT", "");
-        if (host.contains("://")) {
-            URI uri = URI.create(host);
-            if (port.isEmpty() && uri.getPort() > 0) port = String.valueOf(uri.getPort());
-            host = uri.getHost();
-        } else if (host.matches(".*:\\d+$")) {
-            if (port.isEmpty()) port = host.substring(host.lastIndexOf(':') + 1);
-            host = host.substring(0, host.lastIndexOf(':'));
-        }
-        port = port.replaceAll("\\D", "");
-        if (port.isEmpty()) port = "3306";
+        String[] target = hostAndPort(setting(env, "MYSQL_HOST", ""), setting(env, "MYSQL_PORT", ""));
+        String host = target[0];
+        String port = target[1];
         String database = setting(env, "MYSQL_DATABASE", "library_app");
         String poolDigits = setting(env, "MYSQL_POOL_SIZE", "10").replaceAll("\\D", "");
         int poolSize = poolDigits.isEmpty() ? 10 : Integer.parseInt(poolDigits);
@@ -78,6 +68,31 @@ public class DataSourceConfig {
         config.setInitializationFailTimeout(-1);
         config.setPoolName("smartlib");
         return new HikariDataSource(config);
+    }
+
+    private static final Pattern PORT = Pattern.compile("^\\d{1,5}$");
+    private static final Pattern HOST_PORT = Pattern.compile("^(localhost|[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+)(?::(\\d{1,5}))?");
+
+    /**
+     * The database host and port from MYSQL_HOST / MYSQL_PORT, tolerating values pasted into a hosting
+     * dashboard the wrong way: "host:port", a whole service URI (mysql://user:pass@host:port/db), or
+     * host and port swapped between the two settings.
+     */
+    static String[] hostAndPort(String rawHost, String rawPort) {
+        String host = null;
+        String port = null;
+        if (PORT.matcher(rawPort).matches()) port = rawPort;
+        else if (PORT.matcher(rawHost).matches()) port = rawHost;
+        for (String v : new String[] {rawHost, rawPort}) {
+            if (v.isEmpty() || PORT.matcher(v).matches()) continue;
+            String s = v.replaceFirst("^[A-Za-z][A-Za-z0-9+.-]*://", "").replaceFirst("^[^@/]*@", "");
+            Matcher m = HOST_PORT.matcher(s);
+            if (m.find()) {
+                if (host == null) host = m.group(1);
+                if (port == null && m.group(2) != null) port = m.group(2);
+            }
+        }
+        return new String[] {host == null ? "localhost" : host, port == null ? "3306" : port};
     }
 
     private static String setting(Environment env, String key, String fallback) {

@@ -47,6 +47,7 @@ public class HealthController {
                 out.put("success", false);
                 out.put("database", "error");
                 out.put("code", code(e));
+                out.put("detail", detail(e));
             }
         }
         return ResponseEntity.status(Boolean.TRUE.equals(out.get("success")) ? 200 : 503).body(out);
@@ -55,6 +56,14 @@ public class HealthController {
     private String has(String key) {
         String v = env.getProperty(key);
         return v == null || v.isEmpty() ? "missing" : "set";
+    }
+
+    /** The root cause's message without any connection options (the part after "?"), at most 160 characters. */
+    private static String detail(Throwable e) {
+        Throwable root = e;
+        while (root.getCause() != null && root.getCause() != root) root = root.getCause();
+        String m = String.valueOf(root.getMessage()).replaceAll("\\?\\S*", "");
+        return m.length() > 160 ? m.substring(0, 160) : m;
     }
 
     /** A short error code: the MySQL error / SQL state, or the root cause's class name (e.g. UnknownHostException). */
