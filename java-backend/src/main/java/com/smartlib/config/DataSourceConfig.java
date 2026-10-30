@@ -2,6 +2,7 @@ package com.smartlib.config;
 
 import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,10 +31,23 @@ public class DataSourceConfig {
 
     @Bean
     public DataSource dataSource(Environment env) throws Exception {
-        String host = env.getProperty("MYSQL_HOST", "localhost");
-        String port = env.getProperty("MYSQL_PORT", "3306");
-        String database = env.getProperty("MYSQL_DATABASE", "library_app");
-        int poolSize = Integer.parseInt(env.getProperty("MYSQL_POOL_SIZE", "10"));
+        // Values pasted into a hosting dashboard often carry spaces or line breaks; the host may also be
+        // pasted as "host:port" or as a whole service URI (mysql://user:pass@host:port/db).
+        String host = setting(env, "MYSQL_HOST", "localhost");
+        String port = setting(env, "MYSQL_PORT", "");
+        if (host.contains("://")) {
+            URI uri = URI.create(host);
+            if (port.isEmpty() && uri.getPort() > 0) port = String.valueOf(uri.getPort());
+            host = uri.getHost();
+        } else if (host.matches(".*:\\d+$")) {
+            if (port.isEmpty()) port = host.substring(host.lastIndexOf(':') + 1);
+            host = host.substring(0, host.lastIndexOf(':'));
+        }
+        port = port.replaceAll("\\D", "");
+        if (port.isEmpty()) port = "3306";
+        String database = setting(env, "MYSQL_DATABASE", "library_app");
+        String poolDigits = setting(env, "MYSQL_POOL_SIZE", "10").replaceAll("\\D", "");
+        int poolSize = poolDigits.isEmpty() ? 10 : Integer.parseInt(poolDigits);
 
         StringBuilder url = new StringBuilder("jdbc:mysql://").append(host).append(':').append(port).append('/').append(database)
             .append("?tinyInt1isBit=false&zeroDateTimeBehavior=CONVERT_TO_NULL&characterEncoding=UTF-8");
@@ -53,8 +67,8 @@ public class DataSourceConfig {
 
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(url.toString());
-        config.setUsername(env.getProperty("MYSQL_USER", "root"));
-        config.setPassword(env.getProperty("MYSQL_PASSWORD", ""));
+        config.setUsername(setting(env, "MYSQL_USER", "root"));
+        config.setPassword(setting(env, "MYSQL_PASSWORD", ""));
         config.setMaximumPoolSize(poolSize);
         config.setMinimumIdle(Math.min(2, poolSize));
         config.setIdleTimeout(60_000);
@@ -64,6 +78,11 @@ public class DataSourceConfig {
         config.setInitializationFailTimeout(-1);
         config.setPoolName("smartlib");
         return new HikariDataSource(config);
+    }
+
+    private static String setting(Environment env, String key, String fallback) {
+        String v = env.getProperty(key, "").strip();
+        return v.isEmpty() ? fallback : v;
     }
 
     /** Writes the PEM certificate(s) into a temporary PKCS12 trust store for the MySQL driver. */
